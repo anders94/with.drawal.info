@@ -13,9 +13,12 @@ const axios = require('axios');
     await client.connect();
 
     const res = await client.query('SELECT id, pubkey FROM validators ORDER BY id ASC');
-    if (res.rows)
+    if (res.rows) {
 	for (const row of res.rows)
 	    console.log(row.id, row.pubkey);
+	console.log('  total:', res.rows.length);
+
+    }
 
     await client.end();
 })();
