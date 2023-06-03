@@ -1,4 +1,14 @@
 -- ----------------------------------------------------
+-- Table: Config
+--   Stores configuration values such as where we last
+--   left off work.
+-- ----------------------------------------------------
+CREATE TABLE config (
+       k            TEXT            NOT NULL UNIQUE,
+       v            TEXT            NOT NULL
+) WITH (OIDS=FALSE);
+
+-- ----------------------------------------------------
 -- Table: Validators
 --   Lists validators we are monitoring
 -- ----------------------------------------------------
