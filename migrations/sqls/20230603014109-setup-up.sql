@@ -25,7 +25,7 @@ CREATE TABLE validators (
 CREATE TABLE epochs (
        id           BIGINT          NOT NULL UNIQUE,
        stamp        TIMESTAMP       NOT NULL,
-       usd_value    NUMERIC(16,4),
+       usd_rate     NUMERIC(16,4),
        CONSTRAINT pk_epochs_id      PRIMARY KEY (id)
 ) WITH (OIDS=FALSE);
 
