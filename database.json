@@ -1,0 +1,25 @@
+{
+    "defaultEnv": "dev",
+    "dev": {
+	"driver": "pg",
+	"user": "staking",
+	"password": { "ENV" : "DB_PASS" },
+	"host": "127.0.0.1",
+	"database": "staking_dev"
+    },
+    "test": {
+	"driver": "pg",
+	"user": "staking",
+	"password": { "ENV" : "DB_PASS" },
+	"host": "127.0.0.1",
+	"database": "staking_test"
+    },
+    "prod": {
+	"driver": "pg",
+	"user": "staking",
+	"password": { "ENV" : "DB_PASS" },
+	"host": "127.0.0.1",
+	"database": "staking_prod"
+    },
+    "sql-file" : true
+}
