@@ -1,6 +1,10 @@
 const pg = require('pg');
 const axios = require('axios');
 
+const delay = 100;
+
+const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
 (async () => {
     const client = new pg.Client({
 	host: '127.0.0.1',
@@ -21,12 +25,10 @@ const axios = require('axios');
 	await client.query('INSERT INTO config (k, v) VALUES ($1, $2)', ['last slot processed', 6209535]);
     else
 	currentSlot = Number(res.rows[0].v);
-    console.log('current slot:', currentSlot);
 
     // get latest slot
     tmp = await axios.get('http://localhost:3500/eth/v2/beacon/blocks/finalized');
     const latestSlot = Number(tmp.data.data.message.slot);
-    console.log('latest slot:', latestSlot);
 
     // get an array of our validators
     res = await client.query('SELECT id, pubkey FROM validators ORDER BY id ASC');
@@ -38,17 +40,53 @@ const axios = require('axios');
 	console.log(' ', validator.id, validator.pubkey);
 
     // iterate from currentSlot to latestSlot and get withdrawals
-      // check our validators against each withdrawal and insert ones we don't have
+    for (; currentSlot < latestSlot; currentSlot++) {
+	console.log('working on slot', currentSlot, 'of', latestSlot);
+	const epoch = Math.floor(currentSlot / 32);
 
-/*
+	res = await client.query('SELECT stamp FROM epochs WHERE id = $1', [epoch]);
+	if (res.rows.length == 0) {
+	    let tmp = await axios.get('https://beaconcha.in/api/v1/epoch/' + epoch);
+	    console.log('  inserting epoch', epoch, 'with timestamp', tmp.data.data.ts);
+	    await client.query('INSERT INTO epochs (id, stamp) VALUES ($1, $2)', [epoch, tmp.data.data.ts]);
+	}
 
-    res = await axios.get('http://127.0.0.1:3500/eth/v2/beacon/blocks/6553818');
+	try {
+	    res = await axios.get('http://127.0.0.1:3500/eth/v2/beacon/blocks/' + currentSlot);
+	    if (res.data && res.data.data && res.data.data.message && res.data.data.message.body && res.data.data.message.body.execution_payload) {
+		const withdrawals = res.data.data.message.body.execution_payload.withdrawals;
+		if (withdrawals && withdrawals.length) {
+		    // check our validators against each withdrawal and insert ones we don't have
+		    for (const withdrawal of withdrawals) {
+			for (const validator of validators) {
+			    if (validator.id == withdrawal.validator_index) {
+				console.log('  adding withdrawal for validator', validator.id, 'of', withdrawal.amount, 'to', withdrawal.address);
+				await client.query('INSERT INTO withdrawals (id, epoch_id, validator_id, address, amount) VALUES ($1, $2, $3, $4, $5)',
+						   [withdrawal.index, epoch, withdrawal.validator_index, withdrawal.address, withdrawal.amount]);
 
-    const withdrawals = res.data.data.message.body.execution_payload.withdrawals;
-    for (const withdrawal of withdrawals) {
-	console.log(withdrawal);
+			    }
+
+			}
+
+		    }
+
+		}
+
+	    }
+	    else
+		console.log(res.data);
+
+	}
+	catch (err) {
+	    console.log(err);
+
+	}
+
+	await client.query('UPDATE config SET v = $2 WHERE k = $1', ['last slot processed', currentSlot]);
+
+	await sleep(delay);
+
     }
-*/
 
     await client.end()
 
