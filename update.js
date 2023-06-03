@@ -78,7 +78,11 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 	}
 	catch (err) {
-	    console.log(err);
+	    if (err.response && err.response.status == 404) {
+		//console.log('not found');
+	    }
+	    else
+		console.log(err);
 
 	}
 
