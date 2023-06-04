@@ -11,6 +11,8 @@ const sub = require('date-fns/sub');
 	password: process.env.DB_PASS,
     });
 
+    console.log('start', new Date());
+
     await client.connect();
 
     const end = new Date().getTime();
@@ -22,16 +24,18 @@ const sub = require('date-fns/sub');
     if (res.data && res.data.prices) {
 	const prices = res.data.prices;
 	for (const price of prices) {
-	    console.log(new Date(price[0]), price[1]);
+	    console.log(' ', new Date(price[0]), price[1]);
 	    res = await client.query('SELECT price, stamp FROM prices WHERE stamp = $1', [new Date(price[0])]);
 	    if (res.rows.length == 0)
 		await client.query('INSERT INTO prices (stamp, price) VALUES ($1, $2)', [new Date(price[0]), price[1]]);
 	    else
-		console.log('already have a price for', res.rows[0].stamp);
+		console.log('  already have a price for', res.rows[0].stamp);
 
 	}
 
     }
+
+    console.log('end', new Date());
 
     await client.end();
 })();
