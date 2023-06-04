@@ -33,19 +33,5 @@ const sub = require('date-fns/sub');
 
     }
 
-/*    
-    const res = await client.query('SELECT id, pubkey FROM validators WHERE id = $1', [id]);
-    if (res.rows && res.rows.length == 0) {
-	const o = await axios.get('http://127.0.0.1:3500/eth/v1/beacon/states/finalized/validators/' + id);
-
-	const pubkey = o.data.data.validator.pubkey;
-	console.log('adding', id, pubkey);
-	await client.query('INSERT INTO validators (id, pubkey) VALUES ($1, $2)', [id, pubkey]);
-
-    }
-    else
-	console.log('validator', id, 'already added');
-*/
-
     await client.end();
 })();
