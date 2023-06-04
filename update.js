@@ -14,6 +14,8 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 	password: process.env.DB_PASS,
     });
 
+    console.log('start', new Date());
+
     await client.connect();
 
     let res;
@@ -35,19 +37,17 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
     if (res.rows.length == 0)
 	throw new Error('No validators found!')
     const validators = res.rows;
-    console.log('validators');
-    for (const validator of validators)
-	console.log(' ', validator.id, validator.pubkey);
+    console.log('  ', validators.length, 'validators configured');
 
     // iterate from currentSlot to latestSlot and get withdrawals
     for (; currentSlot < latestSlot; currentSlot++) {
-	console.log('working on slot', currentSlot, 'of', latestSlot);
+	console.log('    working on slot', currentSlot, 'of', latestSlot);
 	const epoch = Math.floor(currentSlot / 32);
 
 	res = await client.query('SELECT stamp FROM epochs WHERE id = $1', [epoch]);
 	if (res.rows.length == 0) {
 	    let tmp = await axios.get('https://beaconcha.in/api/v1/epoch/' + epoch);
-	    console.log('  inserting epoch', epoch, 'with timestamp', tmp.data.data.ts);
+	    console.log('      inserting epoch', epoch, 'with timestamp', tmp.data.data.ts);
 	    await client.query('INSERT INTO epochs (id, stamp) VALUES ($1, $2)', [epoch, tmp.data.data.ts]);
 	}
 
@@ -60,7 +60,7 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 		    for (const withdrawal of withdrawals) {
 			for (const validator of validators) {
 			    if (validator.id == withdrawal.validator_index) {
-				console.log('  adding withdrawal for validator', validator.id, 'of', withdrawal.amount, 'to', withdrawal.address);
+				console.log('      adding withdrawal for validator', validator.id, 'of', withdrawal.amount, 'to', withdrawal.address);
 				await client.query('INSERT INTO withdrawals (id, epoch_id, validator_id, address, amount) VALUES ($1, $2, $3, $4, $5)',
 						   [withdrawal.index, epoch, withdrawal.validator_index, withdrawal.address, withdrawal.amount]);
 
@@ -91,6 +91,8 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 	await sleep(delay);
 
     }
+
+    console.log('done', new Date());
 
     await client.end()
 
