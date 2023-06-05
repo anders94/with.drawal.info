@@ -13,21 +13,19 @@ block content
         table.table
           thead
             tr
-              th Epoch
               th Date
-              th Attestation Source
-              th Attestation Target
-              th Attestation Head
-              th Total Reward
+              th Epoch
+              th Address
+              th ETH Amount
+              th USD Value
           tbody
-            each inc in income
+            each withdrawal in withdrawals
               tr
-                td= inc.epoch_id
-                td= inc.ts
-                td= inc.attestation_source_reward
-                td= inc.attestation_target_reward
-                td= inc.attestation_head_reward
-                td= inc.attestation_source_reward + inc.attestation_target_reward + inc.attestation_head_reward
+                td= new Date(withdrawal.stamp).getTime()
+                td= withdrawal.epoch_id
+                td= withdrawal.address
+                td= Number(withdrawal.amount)
+                td $#{Number(withdrawal.usd_value).toFixed(2)}
       .card-footer
         a(href='/')
-          button.btn.btn-lg.btn-primary.float-end Done
+          button.btn.btn-lg.btn-primary.float-end Back
