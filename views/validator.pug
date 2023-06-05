@@ -1,0 +1,33 @@
+extends layout
+
+block javascripts
+
+block content
+  .container
+    .card.mt-4
+      .card-header
+        h2 Validator #{validator.id}
+        p= validator.pubkey
+      .card-body
+        h4 Income
+        table.table
+          thead
+            tr
+              th Epoch
+              th Date
+              th Attestation Source
+              th Attestation Target
+              th Attestation Head
+              th Total Reward
+          tbody
+            each inc in income
+              tr
+                td= inc.epoch_id
+                td= inc.ts
+                td= inc.attestation_source_reward
+                td= inc.attestation_target_reward
+                td= inc.attestation_head_reward
+                td= inc.attestation_source_reward + inc.attestation_target_reward + inc.attestation_head_reward
+      .card-footer
+        a(href='/')
+          button.btn.btn-lg.btn-primary.float-end Done

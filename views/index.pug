@@ -1,0 +1,26 @@
+extends layout
+
+block javascripts
+  script(src='/js/index.js')
+
+block content
+  .container
+    .card.mt-4
+      .card-header
+        h2 ETH Staking Statistics
+      .card-body
+        table.table.table-hover
+          thead
+            tr
+              th #
+              th ID
+              th Pub Key
+          tbody
+            each validator, index in validators
+              tr
+                td= index + 1
+                td
+                  a(href='/validator/' + validator.id) #{validator.id}
+                td= validator.pubkey.substr(0, 10) + ' ... ' + validator.pubkey.substr(validator.pubkey.length - 10)
+      .card-footer
+        h4.text-end Total: $1,234.56
