@@ -21,7 +21,7 @@ block content
           tbody
             each withdrawal in withdrawals
               tr
-                td= new Date(withdrawal.stamp).getTime()
+                td= withdrawal.stamp.toLocaleDateString('en-us', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})
                 td= withdrawal.epoch_id
                 td= withdrawal.address
                 td= Number(withdrawal.amount)
