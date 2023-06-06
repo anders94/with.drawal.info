@@ -15,6 +15,7 @@ const http = require('http').createServer(app);
 (async () => {
     app.get('/', routes.index);
     app.get('/validator/:id', routes.validator);
+    app.get('/withdrawals', routes.withdrawals);
 
     http.listen(port, host, () => {
 	console.log(`Listening on ${host}:${port}`)
