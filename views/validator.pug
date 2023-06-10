@@ -3,6 +3,7 @@ extends layout
 block javascripts
 
 block content
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   .container
     .card.mt-4
       .card-header
@@ -25,7 +26,7 @@ block content
                 td= withdrawal.epoch_id
                 td= withdrawal.address
                 td= Number(withdrawal.amount)
-                td $#{Number(withdrawal.usd_value).toFixed(2)}
+                td(align='right')= usdFormatter.format(withdrawal.usd_value)
       .card-footer
         a(href='/')
           button.btn.btn-lg.btn-primary.float-end Back
