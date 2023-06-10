@@ -4,6 +4,8 @@ block javascripts
   script(src='/js/index.js')
 
 block content
+  - let total = 0;
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   .container
     .card.mt-4
       .card-header
@@ -18,11 +20,12 @@ block content
               th Payouts
           tbody
             each validator, index in validators
+              - total += Number(validator.total)
               tr
                 td= index + 1
                 td
                   a(href='/validator/' + validator.id) #{validator.id}
-                td= validator.pubkey.substr(0, 10) + '...' + validator.pubkey.substr(validator.pubkey.length - 10)
-                td $#{Number(validator.total).toFixed(2)}
+                td= validator.pubkey.substr(0, 5) + '...' + validator.pubkey.substr(validator.pubkey.length - 5)
+                td(align='right')= usdFormatter.format(validator.total)
       .card-footer
-        h4.text-end Total: $1,234.56
+        h4.text-end Total: #{usdFormatter.format(total)}
