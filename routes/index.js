@@ -11,7 +11,8 @@ module.exports = {
                    withdrawals w
                      LEFT JOIN epochs e ON w.epoch_id = e.id
                      LEFT JOIN validators v ON w.validator_id = v.id
-                 GROUP BY v.id`
+                 GROUP BY v.id
+                 ORDER BY v.id ASC`
 	    );
 	    res.render('index', {
 		validators: v.rows
@@ -46,7 +47,7 @@ module.exports = {
                  GROUP BY
                    e.stamp, v.id, w.id, w.epoch_id, w.address, w.amount
                  ORDER BY
-                    w.epoch_id ASC;`, [id]
+                    w.epoch_id DESC;`, [id]
 	    );
 	    res.render('validator', {
 		validator: v.rows[0],
