@@ -16,7 +16,8 @@ block content
             tr
               th #
               th ID
-              th Pub Key
+              th.d-none.d-md-block.d-lg-block.d-xl-none Pub Key
+              th.d-none.d-xl-block Pub Key
               th Payouts
           tbody
             each validator, index in validators
@@ -25,7 +26,8 @@ block content
                 td= index + 1
                 td
                   a(href='/validator/' + validator.id) #{validator.id}
-                td= validator.pubkey.substr(0, 5) + '...' + validator.pubkey.substr(validator.pubkey.length - 5)
+                td.d-none.d-md-block.d-lg-block.d-xl-none= validator.pubkey.substr(0, 10) + '...' + validator.pubkey.substr(validator.pubkey.length - 10)
+                td.d-none.d-xl-block= validator.pubkey.substr(0, 32) + '...' + validator.pubkey.substr(validator.pubkey.length -32)
                 td(align='right')= usdFormatter.format(validator.total)
       .card-footer
         h4.text-end Total: #{usdFormatter.format(total)}
