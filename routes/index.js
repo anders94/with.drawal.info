@@ -15,7 +15,8 @@ module.exports = {
                  ORDER BY v.id ASC`
 	    );
 	    res.render('index', {
-		validators: v.rows
+		validators: v.rows,
+		page: 'index'
 	    });
 	}
 	catch (e) {
@@ -51,7 +52,8 @@ module.exports = {
 	    );
 	    res.render('validator', {
 		validator: v.rows[0],
-		withdrawals: w.rows
+		withdrawals: w.rows,
+		page: 'validator'
 	    });
 
 	}
@@ -84,7 +86,8 @@ module.exports = {
                     w.epoch_id DESC;`
 	    );
 	    res.render('withdrawals', {
-		withdrawals: w.rows
+		withdrawals: w.rows,
+		page: 'withdrawals'
 	    });
 
 	}

@@ -9,7 +9,6 @@ block content
         h2 Withdrawals
         p Date range picker should go here.
       .card-body
-        h4 Withdrawals
         table.table
           thead
             tr
@@ -24,7 +23,8 @@ block content
               tr
                 td= withdrawal.stamp.toLocaleDateString('en-us', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})
                 td.d-none.d-md-block.d-lg-block.d-xl-block= withdrawal.epoch_id
-                td= withdrawal.validator_id
+                td
+                  a(href='/validator/'+withdrawal.validator_id) #{withdrawal.validator_id}
                 td.d-none.d-xl-block= withdrawal.address
                 td= Number(withdrawal.amount)
                 td $#{Number(withdrawal.usd_value).toFixed(2)}
