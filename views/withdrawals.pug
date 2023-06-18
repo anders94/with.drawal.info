@@ -13,19 +13,19 @@ block content
           thead
             tr
               th Date
-              th.d-none.d-md-block.d-lg-block.d-xl-block Epoch
+              th.d-none.d-md-block Epoch
               th Validator
-              th.d-none.d-xl-block Address
+              th.d-none.d-lg-block Address
               th ETH Amount
               th USD Value
           tbody
             each withdrawal in withdrawals
               tr
                 td= withdrawal.stamp.toLocaleDateString('en-us', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})
-                td.d-none.d-md-block.d-lg-block.d-xl-block= withdrawal.epoch_id
+                td.d-none.d-md-block= withdrawal.epoch_id
                 td
                   a(href='/validator/'+withdrawal.validator_id) #{withdrawal.validator_id}
-                td.d-none.d-xl-block= withdrawal.address
+                td.d-none.d-lg-block= withdrawal.address
                 td= Number(withdrawal.amount)
                 td $#{Number(withdrawal.usd_value).toFixed(2)}
       .card-footer
