@@ -3,6 +3,8 @@ extends layout
 block javascripts
 
 block content
+  - let total = 0;
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   .container
     .card.mt-4
       .card-header
@@ -20,6 +22,7 @@ block content
               th USD Value
           tbody
             each withdrawal in withdrawals
+              - total += Number(withdrawal.usd_value)
               tr
                 td= withdrawal.stamp.toLocaleDateString('en-us', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})
                 td.d-none.d-md-block= withdrawal.epoch_id
@@ -29,5 +32,4 @@ block content
                 td= Number(withdrawal.amount)
                 td $#{Number(withdrawal.usd_value).toFixed(2)}
       .card-footer
-        a(href='/')
-          button.btn.btn-lg.btn-primary.float-end Back
+        h4.text-end Total: #{usdFormatter.format(total)}
