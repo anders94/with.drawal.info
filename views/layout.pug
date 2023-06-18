@@ -17,18 +17,18 @@ html(lang='en', data-bs-theme='dark')
   body
     nav.navbar.navbar-expand-md.navbar-dark.fixed-top.bg-dark
       .container-fluid
-        a.navbar-brand(href="/") Staking Monitor
-        button.navbar-toggler(type="button", data-bs-toggle="collapse", data-bs-target="#navbarCollapse", aria-controls="navbarCollapse", aria-expanded="false", aria-label="Toggle navigation")
+        a.navbar-brand(href='/') Staking Monitor
+        button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarCollapse', aria-controls='navbarCollapse', aria-expanded='false', aria-label='Toggle navigation')
           span.navbar-toggler-icon
         .collapse.navbar-collapse#navbarCollapse
           ul.navbar-nav.me-auto.mb-2.mb-md-0
             li.nav-item
-              a(class='nav-link' + (page == 'index' ? ' active' : ''), aria-current="page", href="/") Home
+              a(class='nav-link' + (page == 'index' ? ' active' : ''), aria-current='page', href='/') Home
             li.nav-item
-              a(class='nav-link' + (page == 'withdrawals' ? ' active' : ''), href="/withdrawals") Withdrawals
-          form.d-flex(role="search", action="/search")
-            input.form-control.me-2(type="search", placeholder="Search", aria-label="Search")
-            button.btn.btn-outline-success(type="submit") Search
+              a(class='nav-link' + (page == 'withdrawals' ? ' active' : ''), href='/withdrawals') Withdrawals
+          form.d-flex(role='search', action='/search', method='POST')
+            input.form-control.me-2(name='query', type='search', placeholder='Validator Number', aria-label='Search')
+            button.btn.btn-outline-success(type='submit') Search
 
     block content
 
