@@ -63,7 +63,7 @@ module.exports = {
 	}
 	catch (e) {
 	    console.log(e);
-	    res.render('error', {error: e});
+	    res.render('error', {message: e});
 	}
 	finally {
 	    return next;
@@ -97,7 +97,7 @@ module.exports = {
 	}
 	catch (e) {
 	    console.log(e);
-	    res.render('error', {error: e});
+	    res.render('error', {message: e});
 	}
 	finally {
 	    return next;
