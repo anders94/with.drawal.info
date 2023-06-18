@@ -16,7 +16,7 @@ block content
             tr
               th Date
               th Epoch
-              th Address
+              th.d-none.d-lg-block.d-xl-block Address
               th ETH Amount
               th USD Value
           tbody
@@ -24,7 +24,7 @@ block content
               tr
                 td= withdrawal.stamp.toLocaleDateString('en-us', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})
                 td= withdrawal.epoch_id
-                td= withdrawal.address
+                td.d-none.d-lg-block.d-xl-block= withdrawal.address
                 td= Number(withdrawal.amount)
                 td(align='right')= usdFormatter.format(withdrawal.usd_value)
       .card-footer
