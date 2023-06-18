@@ -35,6 +35,10 @@ module.exports = {
 		throw new Error('Missing validator id');
 
 	    const v = await db.query('SELECT * FROM validators WHERE id = $1', [id]);
+
+	    if (v.rows.length != 1)
+		throw new Error('Validator not in database!');
+
 	    const w = await db.query(
 		`SELECT
                    e.stamp, w.id, w.epoch_id, w.address, w.amount / 1000000000.0 AS amount,
