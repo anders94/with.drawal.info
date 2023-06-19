@@ -16,6 +16,7 @@ const http = require('http').createServer(app);
     app.get('/', routes.index);
     app.get('/validator/:id', routes.validator);
     app.get('/withdrawals', routes.withdrawals);
+    app.post('/withdrawals', routes.withdrawalSearch);
     app.post('/search', routes.search);
 
     http.listen(port, host, () => {

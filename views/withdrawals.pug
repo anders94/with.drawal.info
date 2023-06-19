@@ -9,7 +9,19 @@ block content
     .card.mt-4
       .card-header
         h2 Withdrawals
-        p Date range picker should go here.
+        form.row.row-cols-lg-auto.g-3.align-items-center(method='post', action='/withdrawals')
+          .col-12
+            label.visually-hidden(for='inlineFormInputGroupStart') Start
+            .input-group
+              .input-group-text Start
+              input#inlineFormInputGroupStart.form-control(type='date', name='start', value=start ? start : new Date().getFullYear() + '-01-01', min='2023-01-01')
+          .col-12
+            label.visually-hidden(for='inlineFormInputGroupEnd') End
+            .input-group
+              .input-group-text End
+              input#inlineFormInputGroupEnd.form-control(type='date', name='end', value=end ? end : new Date().toISOString().slice(0, 10))
+          .col-12
+            button.btn.btn-primary(type='submit') &gt;&gt;
       .card-body
         table.table
           thead
