@@ -38,6 +38,6 @@ router.post('/withdrawals', withdrawals.post);
 
 router.post('/search', search.post);
 
-router.get('/validator', validator.get);
+router.get('/validator/:id', validator.get);
 
 module.exports = router;
