@@ -82,7 +82,8 @@ module.exports = {
                  GROUP BY
                    e.stamp, v.id, w.id, w.epoch_id, w.address, w.amount
                  ORDER BY
-                    w.epoch_id DESC;`
+                    w.epoch_id DESC
+                 LIMIT 1000;`
 	    );
 	    res.render('withdrawals', {
 		withdrawals: w.rows,
