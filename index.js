@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const datefns = require('date-fns');
 const routes = require('./routes');
 
 const app = express();
@@ -13,6 +14,11 @@ app.use(bodyParser.urlencoded({extended: true}));
 const http = require('http').createServer(app);
 
 (async () => {
+    app.use((req, res, next) => {
+	res.locals.datefns = datefns;
+	next();
+    });
+
     app.use('/', routes);
 
     http.listen(port, host, () => {

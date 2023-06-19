@@ -36,7 +36,7 @@ block content
             each withdrawal in withdrawals
               - total += Number(withdrawal.usd_value)
               tr
-                td= withdrawal.stamp.toLocaleDateString('en-us', {year: 'numeric', month: 'numeric', day: 'numeric', hour: 'numeric', minute: 'numeric', second: 'numeric'})
+                td(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatRelative(withdrawal.stamp, new Date())
                 td.d-none.d-md-block= withdrawal.epoch_id
                 td
                   a(href='/validator/'+withdrawal.validator_id) #{withdrawal.validator_id}
@@ -45,3 +45,6 @@ block content
                 td $#{Number(withdrawal.usd_value).toFixed(2)}
       .card-footer
         h4.text-end Total: #{usdFormatter.format(total)}
+  script.
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
