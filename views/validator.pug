@@ -24,7 +24,8 @@ block content
             each withdrawal in withdrawals
               - total += Number(withdrawal.usd_value)
               tr
-                td(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatRelative(withdrawal.stamp, new Date())
+                td
+                  span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
                 td= withdrawal.epoch_id
                 td.d-none.d-lg-block.d-xl-block= withdrawal.address
                 td= Number(withdrawal.amount)

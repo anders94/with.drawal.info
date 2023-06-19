@@ -36,7 +36,8 @@ block content
             each withdrawal in withdrawals
               - total += Number(withdrawal.usd_value)
               tr
-                td(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatRelative(withdrawal.stamp, new Date())
+                td
+                  span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
                 td.d-none.d-md-block= withdrawal.epoch_id
                 td
                   a(href='/validator/'+withdrawal.validator_id) #{withdrawal.validator_id}
