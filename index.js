@@ -13,11 +13,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 const http = require('http').createServer(app);
 
 (async () => {
-    app.get('/', routes.index);
-    app.get('/validator/:id', routes.validator);
-    app.get('/withdrawals', routes.withdrawals);
-    app.post('/withdrawals', routes.withdrawalSearch);
-    app.post('/search', routes.search);
+    app.use('/', routes);
 
     http.listen(port, host, () => {
 	console.log(`Listening on ${host}:${port}`)
