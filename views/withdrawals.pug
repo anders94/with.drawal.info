@@ -27,7 +27,7 @@ block content
           thead
             tr
               th Date
-              th.d-none.d-md-block Epoch
+              th.d-none.d-md-block Slot
               th Validator
               th.d-none.d-lg-block Address
               th ETH Amount
@@ -38,10 +38,11 @@ block content
               tr
                 td
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
-                td.d-none.d-md-block= withdrawal.epoch_id
+                td.d-none.d-md-block= withdrawal.slot_id
                 td
                   a(href='/validator/'+withdrawal.validator_id) #{withdrawal.validator_id}
-                td.d-none.d-lg-block= withdrawal.address
+                td.d-none.d-lg-block
+                  code= withdrawal.address
                 td= Number(withdrawal.amount)
                 td $#{Number(withdrawal.usd_value).toFixed(2)}
       .card-footer

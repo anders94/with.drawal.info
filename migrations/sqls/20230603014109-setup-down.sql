@@ -1,4 +1,4 @@
 DROP TABLE withdrawals;
-DROP TABLE epochs;
+DROP TABLE slots;
 DROP TABLE validators;
 DROP TABLE config;

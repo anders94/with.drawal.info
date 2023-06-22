@@ -9,14 +9,14 @@ block content
     .card.mt-4
       .card-header
         h2 Validator #{validator.id}
-        p= validator.pubkey
+        code= validator.pubkey
       .card-body
         h4 Withdrawals
         table.table
           thead
             tr
               th Date
-              th Epoch
+              th Slot
               th.d-none.d-lg-block.d-xl-block Address
               th ETH Amount
               th USD Value
@@ -26,8 +26,9 @@ block content
               tr
                 td
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
-                td= withdrawal.epoch_id
-                td.d-none.d-lg-block.d-xl-block= withdrawal.address
+                td= withdrawal.slot_id
+                td.d-none.d-lg-block.d-xl-block
+                  code= withdrawal.address
                 td= Number(withdrawal.amount)
                 td(align='right')= usdFormatter.format(withdrawal.usd_value)
       .card-footer

@@ -11,13 +11,17 @@ router.get('/', async (req, res, next) => {
 	const v = await db.query(
 	    `SELECT
                v.id, v.pubkey,
-               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, e.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS total
+               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS total
              FROM
                withdrawals w
-                 LEFT JOIN epochs e ON w.epoch_id = e.id
+                 LEFT JOIN slots s ON w.slot_id = s.id
                  LEFT JOIN validators v ON w.validator_id = v.id
+                 LEFT JOIN users2validators u2v ON v.id = u2v.validator_id
+             WHERE u2v.user_id = $1
              GROUP BY v.id
-             ORDER BY v.id ASC`
+             ORDER BY v.id ASC
+             LIMIT 32`,
+	    ['d3381029-a22f-4c5f-85aa-6b80bdcadb4f']
 	);
 	res.render('index', {
 	    validators: v.rows,

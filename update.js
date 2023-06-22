@@ -21,14 +21,16 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
     let res;
     let currentSlot = 6209535;
 
-    // get current slot
+    // get last slot processed
     res = await client.query('SELECT v FROM config WHERE k = $1', ['last slot processed']);
-    if (res.rows.length == 0) // shapella (withdrawal unlock) was at epoch 194048 slot 6209536
-	await client.query('INSERT INTO config (k, v) VALUES ($1, $2)', ['last slot processed', 6209535]);
+    if (res.rows.length == 0) { // shapella (withdrawal unlock) was at epoch 194048 slot 6209536
+	currentSlot = 6209535;
+	await client.query('INSERT INTO config (k, v) VALUES ($1, $2)', ['last slot processed', currentSlot]);
+    }
     else
 	currentSlot = Number(res.rows[0].v);
 
-    // get latest slot
+    // get latest finalized slot
     tmp = await axios.get('http://localhost:3500/eth/v2/beacon/blocks/finalized');
     const latestSlot = Number(tmp.data.data.message.slot);
 
