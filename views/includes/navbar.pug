@@ -1,0 +1,25 @@
+nav.navbar.navbar-expand-md.fixed-top
+  .container-fluid
+    a.navbar-brand(href='/')
+      img.d-inline-block.align-text-top(src='/img/steak-512.png', alt='Logo', width=24, height=24)
+      | &nbsp;Steaking Monitor
+    button.navbar-toggler(type='button', data-bs-toggle='collapse', data-bs-target='#navbarCollapse', aria-controls='navbarCollapse', aria-expanded='false', aria-label='Toggle navigation')
+      span.navbar-toggler-icon
+    .collapse.navbar-collapse#navbarCollapse
+      ul.navbar-nav.nav-pills.me-auto.mb-2.mb-md-0
+        li.nav-item
+          a(class='nav-link' + (page == 'index' ? ' active' : ''), aria-current='page', href='/') Home
+        li.nav-item
+          a(class='nav-link' + (page == 'withdrawals' ? ' active' : ''), href='/withdrawals') Withdrawals
+        li.nav-item
+          a(class='nav-link' + (page == 'about' ? ' active' : ''), href='/about') About
+        li.nav-item
+          button.btn.btn-secondary.me-2(type='button')
+            svg.bi.bi-person-circle(xmlns='http://www.w3.org/2000/svg', width=16, height=16, fill='currentColor', viewBox='0 0 16 16')
+              path(d='M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z')
+              path(fill-rule='evenodd', d='M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z')
+            | &nbsp; Account
+
+      form.d-flex(role='search', action='/search', method='POST')
+        input.form-control.me-2(name='query', type='search', placeholder='Validator Number', aria-label='Search')
+        button.btn.btn-secondary(type='submit') View

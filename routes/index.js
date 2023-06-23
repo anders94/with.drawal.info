@@ -36,6 +36,12 @@ router.get('/', async (req, res, next) => {
 	return next;
     }
 });
+router.get('/about', async (req, res, next) => {
+    res.render('about', {
+	page: 'about'
+    });
+    return next;
+});
 
 router.get('/withdrawals', withdrawals.get);
 router.post('/withdrawals', withdrawals.post);
