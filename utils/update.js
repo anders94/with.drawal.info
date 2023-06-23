@@ -55,7 +55,7 @@ const beaconURL = 'http://localhost:3500';
 			tmp = await db.query('SELECT * FROM withdrawals WHERE id = $1',
 					     [withdrawal.index]);
 			if (tmp.rows.length == 0) {
-			    console.log('  adding withdrawal', withdrawal.index, 'for validator',
+			    console.log('    adding withdrawal', withdrawal.index, 'for validator',
 					withdrawal.validator_index, 'of', withdrawal.amount, 'to',
 					withdrawal.address);
 
@@ -83,7 +83,7 @@ const beaconURL = 'http://localhost:3500';
 
 			}
 			else
-			    console.log(tmp && tmp.rows ? 'we already have this withdrawal' : 'some issue with the db result ' + tmp);
+			    console.log(tmp && tmp.rows ? '    we already have this withdrawal' : 'some issue with the db result ' + tmp);
 
 		    }
 
