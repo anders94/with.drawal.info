@@ -1,0 +1,21 @@
+.modal#accountModal.fade(tabindex=-1, aria-labelledby='exampleModalLabel', aria-hidden='true')
+  .modal-dialog
+    .modal-content
+      .modal-header
+        h1#accountModalLabel.modal-title.fs-5 Account
+        button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
+      .modal-body
+        ul#signup.nav.nav-tabs(role='tablist')
+          li.nav-item(role='presentation')
+            button#signup-tab.nav-link.active(data-bs-toggle='tab', data-bs-target='#signup-tab-pane', type='button', role='tab', aria-controls='signup-tab-pane', aria-selected='true') Signup
+          li.nav-item(role='presentation')
+            button#login-tab.nav-link(data-bs-toggle='tab', data-bs-target='#login-tab-pane', type='button', role='tab', aria-controls='login-tab-pane', aria-selected='false') Login
+          li.nav-item(role='presentation')
+            button#forgot-tab.nav-link(data-bs-toggle='tab', data-bs-target='#forgot-tab-pane', type='button', role='tab', aria-controls='forgot-tab-pane', aria-selected='false') Forgot Password
+        #tabContent.tab-content
+          #signup-tab-pane.tab-pane.show.active(role='tabpanel', aria-labelledby='signup-tab', tabindex=0) Signup stuff here
+          #login-tab-pane.tab-pane(role='tabpanel', aria-labelledby='signup-tab', tabindex=0) Login stuff here
+          #forgot-tab-pane.tab-pane(role='tabpanel', aria-labelledby='forgot-tab', tabindex=0) Forgot password stuff here
+      .modal-footer
+        button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Close
+        button.btn.btn-primary(type='button') Save changes
