@@ -5,17 +5,21 @@
         h1#accountModalLabel.modal-title.fs-5 Account
         button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
       .modal-body
-        ul#signup.nav.nav-tabs(role='tablist')
-          li.nav-item(role='presentation')
-            button#signup-tab.nav-link.active(data-bs-toggle='tab', data-bs-target='#signup-tab-pane', type='button', role='tab', aria-controls='signup-tab-pane', aria-selected='true') Signup
-          li.nav-item(role='presentation')
-            button#login-tab.nav-link(data-bs-toggle='tab', data-bs-target='#login-tab-pane', type='button', role='tab', aria-controls='login-tab-pane', aria-selected='false') Login
-          li.nav-item(role='presentation')
-            button#forgot-tab.nav-link(data-bs-toggle='tab', data-bs-target='#forgot-tab-pane', type='button', role='tab', aria-controls='forgot-tab-pane', aria-selected='false') Forgot Password
-        #tabContent.tab-content
-          #signup-tab-pane.tab-pane.show.active(role='tabpanel', aria-labelledby='signup-tab', tabindex=0) Signup stuff here
-          #login-tab-pane.tab-pane(role='tabpanel', aria-labelledby='signup-tab', tabindex=0) Login stuff here
-          #forgot-tab-pane.tab-pane(role='tabpanel', aria-labelledby='forgot-tab', tabindex=0) Forgot password stuff here
+        nav
+          #nav-tab.nav.nav-tabs(role='tablist')
+            button#nav-signup-tab.nav-link.active(data-bs-toggle='tab', data-bs-target='#nav-signup', type='button', role='tab', aria-controls='nav-signup', aria-selected='true') Signup
+            button#nav-login-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-login', type='button' role='tab', aria-controls='nav-login', aria-selected='false') Login
+            button#nav-forgot-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-forgot', type='button', role='tab', aria-controls='nav-contact', aria-selected='false') Forgot Password
+        #nav-tabContent.tab-content
+          #nav-signup.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='nav-signup-tab', tabindex=0)
+            .form-floating.mb-3
+              input#floatingInput.form-control(type='email', placeholder='name@example.com')
+              label(for='floatingInput') Email address
+            .form-floating
+              input#floatingPassword.form-control(type='password', placeholder='Password')
+              label(for='floatingPassword') Password
+          #nav-login.tab-pane(role='tabpanel', aria-labelledby='nav-signup-tab', tabindex=0) Login stuff here
+          #nav-forgot.tab-pane(role='tabpanel', aria-labelledby='nav-forgot-tab', tabindex=0) Forgot password stuff here
       .modal-footer
-        button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Close
-        button.btn.btn-primary(type='button') Save changes
+        button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancel
+        button.btn.btn-primary(type='button') Go
