@@ -10,34 +10,80 @@
             button#nav-signup-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-signup', type='button', role='tab', aria-controls='nav-signup', aria-selected=false) Signup
             button#nav-login-tab.nav-link.active(data-bs-toggle='tab', data-bs-target='#nav-login', type='button' role='tab', aria-controls='nav-login', aria-selected=true) Login
             button#nav-forgot-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-forgot', type='button', role='tab', aria-controls='nav-contact', aria-selected=false) Forgot Password
-        form
           #nav-tabContent.tab-content
             #nav-signup.tab-pane(role='tabpanel', aria-labelledby='nav-signup-tab', tabindex=0)
-              .p-2
-                p Create an account by filling out the fields below.
-                .form-floating.mb-3
-                  input#fullName.form-control(type='text', placeholder='Full Name')
-                  label(for='fullName') Full Name
-                .form-floating.mb-3
-                  input#email.form-control(type='email', placeholder='name@example.com')
-                  label(for='email') Email Address
-                .form-floating
-                  input#password.form-control(type='password', placeholder='Password')
-                  label(for='password') Password
+              form#signupForm.needs-validation(method='post', action='/authenticate/signup', novalidate)
+                .p-2
+                  p Create an account by filling out the fields below.
+                  .form-floating.mb-3
+                    input#fullName.form-control(type='text', name='fullName', placeholder='Full Name', required)
+                    label(for='fullName') Full Name
+                    .invalid-tooltip We need a name for you!
+                  .form-floating.mb-3
+                    input#signupEmail.form-control(type='email', name='signupEmail', placeholder='name@example.com', onKeyUp='rememberEmail("#signupEmail")', required)
+                    label(for='signupEmail') Email Address
+                    .invalid-tooltip Please enter a valid email address.
+                  .form-floating.mb-3
+                    input#signupPassword.form-control(type='password', name='signupPassword', placeholder='Password', required)
+                    label(for='signupPassword') Password
+                    .invalid-tooltip Enter a password to secure your account.
+                  .form-floating
+                    button.btn.btn-primary.float-end(type='submit') Signup
             #nav-login.tab-pane.show.active(role='tabpanel', aria-labelledby='nav-login-tab', tabindex=0)
-              .p-2
-                p Give us your email and password to login.
-                .form-floating.mb-3
-                  input#floatingInput.form-control(type='email', placeholder='name@example.com')
-                  label(for='floatingInput') Email Address
-                .form-floating
-                  input#floatingPassword.form-control(type='password', placeholder='Password')
-                  label(for='floatingPassword') Password
+              form#loginForm.needs-validation(method='post', action='/authenticate/login', novalidate)
+                .p-2
+                  p Give us your email and password to login.
+                  .form-floating.mb-3
+                    input#loginEmail.form-control(type='email', name='loginEmail', placeholder='name@example.com', onKeyUp='rememberEmail("#loginEmail")', required)
+                    label(for='loginEmail') Email Address
+                    .invalid-tooltip Please enter your email address.
+                  .form-floating.mb-3
+                    input#loginPassword.form-control(type='password', name='loginPassword', placeholder='Password', required)
+                    label(for='loginPassword') Password
+                    .invalid-tooltip We'll need your password to login.
+                  .form-floating
+                    button.btn.btn-primary.float-end(type='submit') Login
             #nav-forgot.tab-pane(role='tabpanel', aria-labelledby='nav-forgot-tab', tabindex=0)
-              .p-2
-                p Enter your email address and we will email you a reset link.
-                .form-floating.mb-3
-                  input#floatingInput.form-control(type='email', placeholder='name@example.com')
-                  label(for='floatingInput') Email Address
-      .modal-footer
-        button.btn.btn-primary(type='button') Go
+              form#forgotPasswordForm.needs-validation(method='post', action='/authenticate/forgotPassword', novalidate)
+                .p-2
+                  p Enter your email address and we will email you a reset link.
+                  .form-floating.mb-3
+                    input#forgotEmail.form-control(type='email', name='forgotEmail', placeholder='name@example.com', onKeyUp='rememberEmail("#forgotEmail")', required)
+                    label(for='forgotEmail') Email Address
+                    .invalid-tooltip Please enter the email address you used when you signed up!
+                  .form-floating
+                    button.btn.btn-primary.float-end(type='submit') Send Reset Link
+
+script.
+  (() => {
+    // Loop over forms and prevent submission if not validated
+    const forms = document.querySelectorAll('.needs-validation')
+
+    Array.from(forms).forEach(form => {
+      form.addEventListener('submit', event => {
+        if (!form.checkValidity()) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+
+        form.classList.add('was-validated');
+      }, false);
+    });
+
+    // focus on email or password when modal opens
+    $('#accountModal').on('shown.bs.modal', e => {
+      if ($('#loginEmail').val() == '') {
+        $('#loginEmail').focus();
+      }
+      else {
+        $('#loginPassword').focus();
+      }
+    });
+
+    $('#signupEmail').val(localStorage.getItem('email') ? localStorage.getItem('email') : '');
+    $('#loginEmail').val(localStorage.getItem('email') ? localStorage.getItem('email') : '');
+    $('#forgotEmail').val(localStorage.getItem('email') ? localStorage.getItem('email') : '');
+
+  })();
+
+  const rememberEmail = (field) => localStorage.setItem('email', $(field).val());
