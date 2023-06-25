@@ -7,19 +7,37 @@
       .modal-body
         nav
           #nav-tab.nav.nav-tabs(role='tablist')
-            button#nav-signup-tab.nav-link.active(data-bs-toggle='tab', data-bs-target='#nav-signup', type='button', role='tab', aria-controls='nav-signup', aria-selected='true') Signup
-            button#nav-login-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-login', type='button' role='tab', aria-controls='nav-login', aria-selected='false') Login
-            button#nav-forgot-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-forgot', type='button', role='tab', aria-controls='nav-contact', aria-selected='false') Forgot Password
-        #nav-tabContent.tab-content
-          #nav-signup.tab-pane.fade.show.active(role='tabpanel', aria-labelledby='nav-signup-tab', tabindex=0)
-            .form-floating.mb-3
-              input#floatingInput.form-control(type='email', placeholder='name@example.com')
-              label(for='floatingInput') Email address
-            .form-floating
-              input#floatingPassword.form-control(type='password', placeholder='Password')
-              label(for='floatingPassword') Password
-          #nav-login.tab-pane(role='tabpanel', aria-labelledby='nav-signup-tab', tabindex=0) Login stuff here
-          #nav-forgot.tab-pane(role='tabpanel', aria-labelledby='nav-forgot-tab', tabindex=0) Forgot password stuff here
+            button#nav-signup-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-signup', type='button', role='tab', aria-controls='nav-signup', aria-selected=false) Signup
+            button#nav-login-tab.nav-link.active(data-bs-toggle='tab', data-bs-target='#nav-login', type='button' role='tab', aria-controls='nav-login', aria-selected=true) Login
+            button#nav-forgot-tab.nav-link(data-bs-toggle='tab', data-bs-target='#nav-forgot', type='button', role='tab', aria-controls='nav-contact', aria-selected=false) Forgot Password
+        form
+          #nav-tabContent.tab-content
+            #nav-signup.tab-pane(role='tabpanel', aria-labelledby='nav-signup-tab', tabindex=0)
+              .p-2
+                p Create an account by filling out the fields below.
+                .form-floating.mb-3
+                  input#fullName.form-control(type='text', placeholder='Full Name')
+                  label(for='fullName') Full Name
+                .form-floating.mb-3
+                  input#email.form-control(type='email', placeholder='name@example.com')
+                  label(for='email') Email Address
+                .form-floating
+                  input#password.form-control(type='password', placeholder='Password')
+                  label(for='password') Password
+            #nav-login.tab-pane.show.active(role='tabpanel', aria-labelledby='nav-login-tab', tabindex=0)
+              .p-2
+                p Give us your email and password to login.
+                .form-floating.mb-3
+                  input#floatingInput.form-control(type='email', placeholder='name@example.com')
+                  label(for='floatingInput') Email Address
+                .form-floating
+                  input#floatingPassword.form-control(type='password', placeholder='Password')
+                  label(for='floatingPassword') Password
+            #nav-forgot.tab-pane(role='tabpanel', aria-labelledby='nav-forgot-tab', tabindex=0)
+              .p-2
+                p Enter your email address and we will email you a reset link.
+                .form-floating.mb-3
+                  input#floatingInput.form-control(type='email', placeholder='name@example.com')
+                  label(for='floatingInput') Email Address
       .modal-footer
-        button.btn.btn-secondary(type='button', data-bs-dismiss='modal') Cancel
         button.btn.btn-primary(type='button') Go
