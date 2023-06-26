@@ -20,7 +20,7 @@
                     label(for='fullName') Full Name
                     .invalid-tooltip We need a name for you!
                   .form-floating.mb-3
-                    input#signupEmail.form-control(type='email', name='signupEmail', placeholder='name@example.com', onKeyUp='rememberEmail("#signupEmail")', required)
+                    input#signupEmail.form-control(type='email', name='signupEmail', placeholder='name@example.com', onKeyUp='emailChange("#signupEmail")', required)
                     label(for='signupEmail') Email Address
                     .invalid-tooltip Please enter a valid email address.
                   .form-floating.mb-3
@@ -34,7 +34,7 @@
                 .p-2
                   p Give us your email and password to login.
                   .form-floating.mb-3
-                    input#loginEmail.form-control(type='email', name='loginEmail', placeholder='name@example.com', onKeyUp='rememberEmail("#loginEmail")', required)
+                    input#loginEmail.form-control(type='email', name='loginEmail', placeholder='name@example.com', onKeyUp='emailChange("#loginEmail")', required)
                     label(for='loginEmail') Email Address
                     .invalid-tooltip Please enter your email address.
                   .form-floating.mb-3
@@ -48,7 +48,7 @@
                 .p-2
                   p Enter your email address and we will email you a reset link.
                   .form-floating.mb-3
-                    input#forgotEmail.form-control(type='email', name='forgotEmail', placeholder='name@example.com', onKeyUp='rememberEmail("#forgotEmail")', required)
+                    input#forgotEmail.form-control(type='email', name='forgotEmail', placeholder='name@example.com', onKeyUp='emailChange("#forgotEmail")', required)
                     label(for='forgotEmail') Email Address
                     .invalid-tooltip Please enter the email address you used when you signed up!
                   .form-floating
@@ -86,4 +86,12 @@ script.
 
   })();
 
-  const rememberEmail = (field) => localStorage.setItem('email', $(field).val());
+  const emailChange = (field) => {
+    localStorage.setItem('email', $(field).val());
+    if (field != '#signupEmail')
+      $('#signupEmail').val($(field).val());
+    if (field != '#loginEmail')
+      $('#loginEmail').val($(field).val());
+    if (field != '#forgotEmail')
+      $('#forgotEmail').val($(field).val());
+  };
