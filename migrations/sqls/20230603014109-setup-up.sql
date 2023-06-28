@@ -41,6 +41,7 @@ CREATE TABLE withdrawals (
        UNIQUE (slot_id, validator_id)
 ) WITH (OIDS=FALSE);
 CREATE INDEX withdrawals_validator_id_idx ON withdrawals (validator_id);
+CREATE INDEX withdrawals_address_idx ON withdrawals USING HASH (address);
 
 -- ----------------------------------------------------
 -- Table: Users
