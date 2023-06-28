@@ -1,5 +1,7 @@
 extends layout
 
+block javascripts
+
 block content
   .container
     .card.mt-4
@@ -9,3 +11,10 @@ block content
         p This site lets you see validator withdrawals expressed in USD as of the date of withdrawal.
       .card-footer
         p.text-end Footer info here.
+
+  script(type='module').
+    import { BrowserProvider } from '/js/lib/ethers.min.js';
+    console.log(BrowserProvider);
+
+    //import { SiweMessage } from '/js/lib/siwe.js';
+    //console.log(SiweMessage);
