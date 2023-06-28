@@ -1,10 +1,12 @@
 const db = require('../db');
 const express = require('express');
 const router = express.Router();
+const cors = require('cors');
 
 const withdrawals = require('./withdrawals');
 const search = require('./search');
 const validator = require('./validator');
+const authenticate = require('./authenticate');
 
 router.get('/', async (req, res, next) => {
     try {
@@ -49,5 +51,8 @@ router.post('/withdrawals', withdrawals.post);
 router.post('/search', search.post);
 
 router.get('/validator/:id', validator.get);
+
+router.get('/authenticate/nonce', cors(), authenticate.nonce.get);
+router.post('/authenticate/verify', cors(), authenticate.verify.post);
 
 module.exports = router;
