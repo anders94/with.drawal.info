@@ -26,6 +26,7 @@ const http = require('http').createServer(app);
 
     app.use((req, res, next) => {
 	res.locals.datefns = datefns;
+	res.locals.session = req.session;
 	next();
     });
 

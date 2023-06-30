@@ -87,6 +87,7 @@ router.get('/address/:address', address.get);
 
 router.post('/authenticate/signup', authenticate.signup.post);
 router.post('/authenticate/login', authenticate.login.post);
+router.get('/authenticate/logout', authenticate.logout.get);
 router.post('/authenticate/forgotPassword', authenticate.forgotPassword.post);
 router.get('/authenticate/nonce', cors(), authenticate.nonce.get);
 router.post('/authenticate/verify', cors(), authenticate.verify.post);
