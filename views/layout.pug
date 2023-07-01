@@ -15,7 +15,8 @@ html(lang='en', data-bs-theme='dark')
     block javascripts
 
   body
-    include includes/modal
+    if !session || !session.user
+      include includes/auth
     include includes/navbar
 
     block content
