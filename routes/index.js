@@ -8,26 +8,22 @@ const search = require('./search');
 const validator = require('./validator');
 const address = require('./address');
 const authenticate = require('./authenticate');
+const api = require('./api');
 
 router.get('/', async (req, res, next) => {
     try {
-	const v = await db.query(
+	const w = await db.query(
 	    `SELECT
-               v.id, v.pubkey,
-               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS total
+               s.stamp, w.slot_id, SUM(w.amount) AS eth_total,
+               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_total
              FROM
                withdrawals w
                  LEFT JOIN slots s ON w.slot_id = s.id
-                 LEFT JOIN validators v ON w.validator_id = v.id
-                 LEFT JOIN users2validators u2v ON v.id = u2v.validator_id
-             WHERE u2v.user_id = $1
-             GROUP BY v.id
-             ORDER BY v.id ASC
-             LIMIT 32`,
-	    ['d3381029-a22f-4c5f-85aa-6b80bdcadb4f']
-	);
+             GROUP BY s.stamp, w.slot_id
+             ORDER BY slot_id DESC
+             LIMIT 10`);
 	res.render('index', {
-	    validators: v.rows,
+	    withdrawals: w.rows,
 	    page: 'index'
 	});
     }
@@ -91,5 +87,7 @@ router.get('/authenticate/logout', authenticate.logout.get);
 router.post('/authenticate/forgotPassword', authenticate.forgotPassword.post);
 router.get('/authenticate/nonce', cors(), authenticate.nonce.get);
 router.post('/authenticate/verify', cors(), authenticate.verify.post);
+
+router.get('/api/withdrawals.json', api.withdrawals.get);
 
 module.exports = router;
