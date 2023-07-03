@@ -10,7 +10,28 @@ block content
       .col
         .card.mt-4
           .card-header
-            h2 Total Withdrawn per Slot
+            h2 Withdrawls per Slot
+          .card-body
+            canvas#chart
+            table.table.table-hover
+              thead
+                tr
+                  th Slot
+                  th Date
+                  th ETH Total
+                  th USD Total
+              tbody
+                each withdrawal in withdrawalsPerSlot
+                  tr
+                    td= withdrawal.slot_id
+                    td
+                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
+                    td= Number(withdrawal.eth_value)
+                    td= usdFormatter.format(withdrawal.usd_value)
+      .col
+        .card.mt-4
+          .card-header
+            h2 Latest Withdrawls
           .card-body
             table.table.table-hover
               thead
@@ -20,19 +41,34 @@ block content
                   th ETH Total
                   th USD Total
               tbody
-                each withdrawal in withdrawals
+                each withdrawal in latestWithdrawals
                   tr
                     td= withdrawal.slot_id
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
-                    td(align='right')= withdrawal.eth_total / 1000000000.0
-                    td(align='right')= usdFormatter.format(withdrawal.usd_total)
+                    td= Number(withdrawal.eth_amount)
+                    td= usdFormatter.format(withdrawal.usd_amount)
+    .row
       .col
         .card.mt-4
           .card-header
-            h2 Chart
+            h2 Largest Withdrawals
           .card-body
-            canvas#chart
+            table.table.table-hover
+              thead
+                tr
+                  th Slot
+                  th Date
+                  th ETH Total
+                  th USD Total
+              tbody
+                each withdrawal in largestWithdrawals
+                  tr
+                    td= withdrawal.slot_id
+                    td
+                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
+                    td= Number(withdrawal.eth_amount)
+                    td= usdFormatter.format(withdrawal.usd_amount)
 
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

@@ -1,14 +1,4 @@
 -- ----------------------------------------------------
--- Table: Config
---   Stores configuration values such as where we last
---   left off work.
--- ----------------------------------------------------
-CREATE TABLE config (
-       k            TEXT                           NOT NULL UNIQUE,
-       v            TEXT                           NOT NULL
-) WITH (OIDS=FALSE);
-
--- ----------------------------------------------------
 -- Table: Validators
 --   Lists validators we are monitoring
 -- ----------------------------------------------------
@@ -42,6 +32,20 @@ CREATE TABLE withdrawals (
 ) WITH (OIDS=FALSE);
 CREATE INDEX withdrawals_validator_id_idx ON withdrawals (validator_id);
 CREATE INDEX withdrawals_address_idx ON withdrawals USING HASH (address);
+
+-- ----------------------------------------------------
+-- Table: Summaries
+--   Summary table for popular homepage queries
+-- ----------------------------------------------------
+CREATE TABLE summaries (
+       summary      TEXT                           NOT NULL,
+       ordinal      INT                            NOT NULL,
+       slot_id      BIGINT                         REFERENCES slots(id),
+       validator_id BIGINT                         REFERENCES validators(id),
+       address      TEXT,
+       eth_amount   NUMERIC(32, 18),
+       usd_amount   NUMERIC(18, 2)
+) WITH (OIDS=FALSE);
 
 -- ----------------------------------------------------
 -- Table: Users
