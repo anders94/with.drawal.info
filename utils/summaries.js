@@ -3,16 +3,23 @@ const db = require('../db');
 (async () => {
     let tmp;
 
+    // assign a price to each slot (will be blown away later when get new pricings
+    await db.query(
+	`UPDATE slots s
+           SET price_id = (SELECT id FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
+         WHERE s.price_id IS NULL;`
+    );
+
     // latest withdrawals
     tmp = await db.query(
 	`SELECT
            w.slot_id, validator_id, w.address, w.amount / 1000000000.0 AS eth_amount,
-           (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0) AS usd_amount
+           (w.amount / 1000000000.0) * p.price as usd_amount
          FROM
            withdrawals w
              LEFT JOIN slots s ON w.slot_id = s.id
-         ORDER BY
-           slot_id desc, validator_id desc
+             LEFT JOIN prices p ON s.price_id = p.id
+         ORDER BY slot_id DESC, validator_id DESC
          LIMIT 32`);
 
     await db.query('BEGIN');
@@ -34,12 +41,12 @@ const db = require('../db');
     tmp = await db.query(
 	`SELECT
            w.slot_id, validator_id, w.address, w.amount / 1000000000.0 AS eth_amount,
-           (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0) AS usd_amount
+           (w.amount / 1000000000.0) * p.price AS usd_amount
          FROM
            withdrawals w
              LEFT JOIN slots s ON w.slot_id = s.id
-         ORDER BY
-           w.amount desc
+             LEFT JOIN prices p ON s.price_id = p.id
+         ORDER BY w.amount DESC
          LIMIT 32`);
 
     await db.query('BEGIN');
@@ -61,10 +68,11 @@ const db = require('../db');
     tmp = await db.query(
 	`SELECT
            w.address, SUM(w.amount / 1000000000.0) AS eth_amount,
-           SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_amount
+           SUM((w.amount / 1000000000.0) * p.price) AS usd_amount
          FROM
            withdrawals w
              LEFT JOIN slots s ON w.slot_id = s.id
+             LEFT JOIN prices p ON s.price_id = p.id
          GROUP BY
            w.address
          ORDER BY
