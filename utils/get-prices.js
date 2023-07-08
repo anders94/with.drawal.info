@@ -30,7 +30,7 @@ const sub = require('date-fns/sub');
 	    start = sub(end, {days: 1});
 
 	// remove all pricings on slots newer than the newest price we have
-	client.query('UPDATE slots SET price_id = NULL WHERE stamp > $1', [start]);
+	await client.query('UPDATE slots SET price_id = NULL WHERE stamp > $1', [new Date(start)]);
 
 	res = await axios.get('https://api.coingecko.com/api/v3/coins/ethereum/market_chart/range?vs_currency=usd&from=' + (start / 1000) + '&to=' + (end / 1000));
 
@@ -55,11 +55,11 @@ const sub = require('date-fns/sub');
              WHERE s.price_id IS NULL;`
 	);
 
-	client.query('COMMIT');
+	await client.query('COMMIT');
 
     }
     catch (e) {
-	client.query('ROLLBACK');
+	await client.query('ROLLBACK');
 	console.log(e);
 
     }
