@@ -1,4 +1,14 @@
 -- ----------------------------------------------------
+-- Table: Prices
+--   Prices in USD at given timestamps
+-- ----------------------------------------------------
+CREATE TABLE prices (
+       id           UUID                           NOT NULL UNIQUE DEFAULT gen_random_uuid(),
+       stamp        TIMESTAMP                      NOT NULL UNIQUE,
+       price        NUMERIC(16, 8)                 NOT NULL
+) WITH (OIDS=FALSE);
+
+-- ----------------------------------------------------
 -- Table: Validators
 --   Lists validators we are monitoring
 -- ----------------------------------------------------
@@ -15,6 +25,7 @@ CREATE UNIQUE INDEX validators_id_idx ON validators (id);
 CREATE TABLE slots (
        id           BIGINT                         NOT NULL UNIQUE,
        stamp        TIMESTAMP WITH TIME ZONE       NOT NULL,
+       price_id     UUID                           REFERENCES prices(id),
        CONSTRAINT pk_slots_id                      PRIMARY KEY (id)
 ) WITH (OIDS=FALSE);
 
