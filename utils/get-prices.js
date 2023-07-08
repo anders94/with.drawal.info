@@ -42,6 +42,13 @@ const sub = require('date-fns/sub');
 
     }
 
+    console.log('updating withdrawals that don\'t yet have prices');
+    await client.query(
+	`UPDATE slots s
+           SET price_id = (SELECT id FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
+         WHERE s.price_id IS NULL;`
+    );
+
     console.log('end', new Date());
 
     await client.end();
