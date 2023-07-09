@@ -10,7 +10,7 @@ block content
       .card-header
         h2 Slot #{slot.id}
         h4 #{datefns.formatISO9075(slot.stamp)} (#{datefns.formatDistance(slot.stamp, new Date(), {addSuffix: true})})
-        h6 ETH Price was #{usdFormatter.format(slot.price)}
+        p Price of ETH then was: #{usdFormatter.format(slot.price)}
       .card-body
         h4 Withdrawals
         table.table
