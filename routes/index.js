@@ -6,6 +6,7 @@ const cors = require('cors');
 const withdrawals = require('./withdrawals');
 const search = require('./search');
 const validator = require('./validator');
+const slot = require('./slot');
 const address = require('./address');
 const authenticate = require('./authenticate');
 const api = require('./api');
@@ -92,6 +93,8 @@ router.post('/withdrawals', withdrawals.post);
 router.post('/search', search.post);
 
 router.get('/validator/:id', validator.get);
+
+router.get('/slot/:id', slot.get);
 
 router.get('/address/:address', address.get);
 

@@ -1,0 +1,32 @@
+extends layout
+
+block javascripts
+
+block content
+  - let total = 0;
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  .container
+    .card.mt-4
+      .card-header
+        h2 Slot #{slot.id}
+        h4 #{datefns.formatISO9075(slot.stamp)} (#{datefns.formatDistance(slot.stamp, new Date(), {addSuffix: true})})
+        h6 ETH Price was #{usdFormatter.format(slot.price)}
+      .card-body
+        h4 Withdrawals
+        table.table
+          thead
+            tr
+              th.d-none.d-lg-block.d-xl-block Address
+              th ETH Amount
+              th USD Value
+          tbody
+            each withdrawal in withdrawals
+              - total += Number(withdrawal.amount)
+              tr
+                td.d-none.d-lg-block.d-xl-block
+                  a(href='/address/' + withdrawal.address)
+                    code= withdrawal.address
+                td= Number(withdrawal.amount / 1000000000.0)
+                td(align='right')= usdFormatter.format((withdrawal.amount / 1000000000.0) * slot.price)
+      .card-footer
+        h4.text-end Total: #{usdFormatter.format((total / 1000000000.0) * slot.price)}

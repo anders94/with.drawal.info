@@ -23,7 +23,8 @@ block content
               tbody
                 each withdrawal in withdrawalsPerSlot
                   tr
-                    td= withdrawal.slot_id
+                    td
+                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_value)
@@ -43,7 +44,8 @@ block content
               tbody
                 each withdrawal in latestWithdrawals
                   tr
-                    td= withdrawal.slot_id
+                    td
+                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_amount)
@@ -59,14 +61,18 @@ block content
                 tr
                   th Slot
                   th Date
+                  th Validator
                   th ETH Total
                   th USD Total
               tbody
                 each withdrawal in largestWithdrawals
                   tr
-                    td= withdrawal.slot_id
+                    td
+                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
+                    td
+                      a(href='/validator/' + withdrawal.validator_id)= withdrawal.validator_id
                     td= Number(withdrawal.eth_amount)
                     td= usdFormatter.format(withdrawal.usd_amount)
 
