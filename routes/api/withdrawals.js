@@ -6,10 +6,15 @@ module.exports = {
 	    const w = await db.query(
 		`SELECT
                    s.stamp, w.slot_id,
-                   SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_total
+                   SUM(
+                     COALESCE(
+                       p.price,
+                       (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
+                     ) * (w.amount / 1000000000.0)) AS usd_total
                  FROM
                    withdrawals w
                      LEFT JOIN slots s ON w.slot_id = s.id
+                     LEFT JOIN prices p ON s.price_id = p.id
                  GROUP BY s.stamp, w.slot_id
                  ORDER BY slot_id DESC
                  LIMIT 50`);
