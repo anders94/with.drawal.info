@@ -10,8 +10,6 @@ nav.navbar.navbar-expand-md.fixed-top.bg-dark
         li.nav-item
           a(class='nav-link' + (page == 'index' ? ' active' : ''), aria-current='page', href='/') Home
         li.nav-item
-          a(class='nav-link' + (page == 'withdrawals' ? ' active' : ''), href='/withdrawals') Withdrawals
-        li.nav-item
           if session && session.user
             ul.navbar-nav
               li.nav-item.dropdown
@@ -19,6 +17,8 @@ nav.navbar.navbar-expand-md.fixed-top.bg-dark
                 ul.dropdown-menu.dropdown-menu-dark
                   li
                     a.dropdown-item(href='/dashboard') Dashboard
+                  li
+                    a.dropdown-item(href='/withdrawals') Latest Withdrawals
                   li
                     a.dropdown-item(href='/profile') Profile
                   li
