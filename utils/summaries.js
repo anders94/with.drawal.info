@@ -3,7 +3,7 @@ const db = require('../db');
 (async () => {
     let tmp;
 
-    // assign a price to each slot (will be blown away later when get new pricings
+    // assign a price to each slot (will be blown away later as new pricing comes in
     await db.query(
 	`UPDATE slots s
            SET price_id = (SELECT id FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
@@ -20,7 +20,7 @@ const db = require('../db');
              LEFT JOIN slots s ON w.slot_id = s.id
              LEFT JOIN prices p ON s.price_id = p.id
          ORDER BY slot_id DESC, validator_id DESC
-         LIMIT 32`);
+         LIMIT 100`);
 
     await db.query('BEGIN');
     await db.query('DELETE FROM summaries WHERE summary = $1', ['latest-withdrawals']);
@@ -47,7 +47,7 @@ const db = require('../db');
              LEFT JOIN slots s ON w.slot_id = s.id
              LEFT JOIN prices p ON s.price_id = p.id
          ORDER BY w.amount DESC
-         LIMIT 32`);
+         LIMIT 100`);
 
     await db.query('BEGIN');
     await db.query('DELETE FROM summaries WHERE summary = $1', ['largest-withdrawals']);
@@ -77,7 +77,7 @@ const db = require('../db');
            w.address
          ORDER BY
            eth_amount DESC
-         LIMIT 32`);
+         LIMIT 100`);
 
     await db.query('BEGIN');
     await db.query('DELETE FROM summaries WHERE summary = $1', ['total-withdrawals-by-address']);
