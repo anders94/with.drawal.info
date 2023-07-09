@@ -10,6 +10,26 @@ block content
       .col
         .card.mt-4
           .card-header
+            h2 Latest Withdrawls
+          .card-body
+            table.table.table-hover
+              thead
+                tr
+                  th Slot
+                  th Date
+                  th ETH Total
+                  th USD Total
+              tbody
+                each withdrawal in latestWithdrawals
+                  tr
+                    td= withdrawal.slot_id
+                    td
+                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
+                    td= Number(withdrawal.eth_amount)
+                    td= usdFormatter.format(withdrawal.usd_amount)
+      .col
+        .card.mt-4
+          .card-header
             h2 Withdrawls per Slot
           .card-body
             canvas#chart
@@ -29,27 +49,6 @@ block content
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_value)
                     td= usdFormatter.format(withdrawal.usd_value)
-      .col
-        .card.mt-4
-          .card-header
-            h2 Latest Withdrawls
-          .card-body
-            table.table.table-hover
-              thead
-                tr
-                  th Slot
-                  th Date
-                  th ETH Total
-                  th USD Total
-              tbody
-                each withdrawal in latestWithdrawals
-                  tr
-                    td
-                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
-                    td
-                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
-                    td= Number(withdrawal.eth_amount)
-                    td= usdFormatter.format(withdrawal.usd_amount)
     .row
       .col
         .card.mt-4
