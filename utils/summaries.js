@@ -11,6 +11,7 @@ const db = require('../db');
     );
 
     // latest withdrawals
+    /*
     tmp = await db.query(
 	`SELECT
            w.slot_id, validator_id, w.address, w.amount / 1000000000.0 AS eth_amount,
@@ -36,6 +37,7 @@ const db = require('../db');
 	
     }
     await db.query('COMMIT');
+    */
 
     // largest withdrawals
     tmp = await db.query(

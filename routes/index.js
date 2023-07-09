@@ -25,11 +25,18 @@ router.get('/', async (req, res, next) => {
                w.slot_id DESC
              LIMIT 10`);
 	const latest = await db.query(
-	    `SELECT *
-             FROM summaries su
-               LEFT JOIN slots sl ON su.slot_id = sl.id
-             WHERE summary = $1
-             LIMIT 17`, ['latest-withdrawals']);
+	    `SELECT
+               s.stamp, w.id, v.id AS validator_id, w.slot_id, w.address, w.amount / 1000000000.0 AS eth_amount,
+               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_amount
+             FROM
+               withdrawals w
+                 LEFT JOIN slots s ON w.slot_id = s.id
+                 LEFT JOIN validators v ON w.validator_id = v.id
+             GROUP BY
+               s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
+             ORDER BY
+                w.slot_id DESC
+             LIMIT 17`);
 	const largest = await db.query(
 	    `SELECT *
              FROM summaries su
