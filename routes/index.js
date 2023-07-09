@@ -34,7 +34,8 @@ router.get('/', async (req, res, next) => {
 	    `SELECT *
              FROM summaries su
                LEFT JOIN slots sl ON su.slot_id = sl.id
-             WHERE summary = $1`, ['largest-withdrawals']);
+             WHERE summary = $1
+             LIMIT 10`, ['largest-withdrawals']);
 	res.render('index', {
 	    withdrawalsPerSlot: perSlot.rows,
 	    latestWithdrawals: latest.rows,

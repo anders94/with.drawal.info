@@ -22,7 +22,8 @@ block content
               tbody
                 each withdrawal in latestWithdrawals
                   tr
-                    td= withdrawal.slot_id
+                    td
+                      a(href='/slot' + withdrawal.slot_id)= withdrawal.slot_id
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_amount)
