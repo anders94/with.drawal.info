@@ -8,11 +8,16 @@ block content
       .card-header
         h2 About Stake Monitor
       .card-body
-        p This site lets you see validator withdrawals expressed in USD as of the date of withdrawal.
+        p This site displays Ethereum validator withdrawals as well as the US Dollar value of the ETH at the time.
+        p This may be useful when calculating taxes on validator income but doesn't necessarily cover all rewards. 
+          | (such as MEV payments, for example)
+        p The Ethereum network continuously cycles through all validators withdrawing any amount over whatever is currently 
+          | committed. This usually includes anything over the standard 32 ETH staking amount but may also include all 
+          | staked ETH if the user has elected to exit validation.
       .card-footer
         p.text-end Footer info here.
 
-  script(type='module').
+  //script(type='module').
     //import { BrowserProvider } from '/js/lib/ethers.min.js';
     //console.log(BrowserProvider);
     import { SiweMessage } from '/js/lib/siwe.js';
