@@ -16,7 +16,7 @@ module.exports = {
                      LEFT JOIN slots s ON w.slot_id = s.id
                      LEFT JOIN prices p ON s.price_id = p.id
                  GROUP BY s.stamp, w.slot_id
-                 ORDER BY slot_id ASC
+                 ORDER BY slot_id DESC
                  LIMIT 50`);
 
 	    res.json(w.rows);
