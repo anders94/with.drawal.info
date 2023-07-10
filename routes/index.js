@@ -36,7 +36,7 @@ router.get('/', async (req, res, next) => {
                s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
              ORDER BY
                 w.slot_id DESC
-             LIMIT 17`);
+             LIMIT 15`);
 	const largest = await db.query(
 	    `SELECT *
              FROM summaries su
