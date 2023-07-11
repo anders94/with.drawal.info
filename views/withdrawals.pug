@@ -3,6 +3,7 @@ extends layout
 block javascripts
 
 block content
+  - let count = 0;
   - let total = 0;
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   .container
@@ -34,6 +35,7 @@ block content
               th USD Value
           tbody
             each withdrawal in withdrawals
+              - count ++
               - total += Number(withdrawal.usd_value)
               tr
                 td
@@ -46,7 +48,10 @@ block content
                 td= Number(withdrawal.amount)
                 td $#{Number(withdrawal.usd_value).toFixed(2)}
       .card-footer
-        h4.text-end Total: #{usdFormatter.format(total)}
+        if count == 2500
+          h4.text-end ... More results (only showing first #{count})
+        else
+          h4.text-end Total: #{usdFormatter.format(total)}
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
