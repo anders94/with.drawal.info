@@ -102,6 +102,15 @@ block content
                 position: 'left'
               }
             },
+            onClick(e) {
+              const activePoints = this.getElementsAtEventForMode(e, 'nearest', {
+                intersect: true
+              }, false);
+              const [{
+                index
+              }] = activePoints;
+              window.location = '/slot/' + data[index].slot_id;
+            },
             plugins: {
               legend: {
                 position: 'top',
