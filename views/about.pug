@@ -6,16 +6,24 @@ block content
   .container
     .card.mt-4
       .card-header
-        h2 About Stake Monitor
+        h2 About with.drawal.info
       .card-body
-        p This site displays Ethereum validator withdrawals as well as the US Dollar value of the ETH at the time.
-        p This may be useful when calculating taxes on validator income but doesn't necessarily cover all rewards. 
-          | (such as MEV payments, for example)
-        p The Ethereum network continuously cycles through all validators withdrawing any amount over whatever is currently 
-          | committed. This usually includes anything over the standard 32 ETH staking amount but may also include all 
-          | staked ETH if the user has elected to exit validation.
+        p This site displays Ethereum validator withdrawals as well as the US Dollar value of each withdrawal at the time the payment 
+          | was initiated by the network. This may be useful when calculating taxes on validator rewards but doesn't necessarily cover 
+          | all income. (such as MEV payments, for example)
+        p The term "withdrawal" is a bit of a misnomer. It covers the sweep transactions the network creates to send stakers 
+          | any funds above what they have currently committed. Active stakers must commit 32 ETH so these transactions usually cover 
+          | anything accrued over this amount. This includes any unpaid net rewards but can also include deposit overages. 
+          | Conversely, if a user elects to exit staking, their original 32 ETH will be included in the withdrawal transaction as well 
+          | as any un-swept rewards leaving the account with 0 ETH.
+        p Withdrawal transactions don't incur fees and there are a maximum of 16 withdrawal transactions per slot. The system 
+          | cycles through the list of active validators in ascending index order creating transactions as necessary. Currently 
+          | the network takes about 5 days to cycle through all active validators before starting back again at the beginning.
+        p There are a maximum of 16 withdrawals per slot and a maximum of 32 slots per epoch on the consensus chain. (or beacon chain) 
+          | Epochs line up with blocks on the execution chain where withdrawals can later be spent.
+        p This website is created by <a href="https://twitter.com/anders94">@anders94</a>.
       .card-footer
-        p.text-end Footer info here.
+        p.text-end Thanks for reading!
 
   //script(type='module').
     //import { BrowserProvider } from '/js/lib/ethers.min.js';
