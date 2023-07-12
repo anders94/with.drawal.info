@@ -16,9 +16,9 @@ block content
           | anything accrued over this amount. This includes any unpaid net rewards but can also include deposit overages. 
           | Conversely, if a user elects to exit staking, their original 32 ETH will be included in the withdrawal transaction as well 
           | as any un-swept rewards leaving the account with 0 ETH.
-        p Withdrawal transactions don't incur fees and there are a maximum of 16 withdrawal transactions per slot. The system 
-          | cycles through the list of active validators in ascending index order creating transactions as necessary. Currently 
-          | the network takes about 5 days to cycle through all active validators before starting back again at the beginning.
+        p Withdrawal transactions don't incur fees. The system cycles through the list of active validators in ascending index order 
+          | creating transactions as necessary. Currently the network takes about 5 days to cycle through all active validators before 
+          | starting back again at the beginning.
         p There are a maximum of 16 withdrawals per slot and a maximum of 32 slots per epoch on the consensus chain. (or beacon chain) 
           | Epochs line up with blocks on the execution chain where withdrawals can later be spent.
         p This website is created by <a href="https://twitter.com/anders94">@anders94</a>.
