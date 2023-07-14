@@ -4,3 +4,5 @@ node_modules/
 notes.txt
 *.log
 env/
+run
+log/
