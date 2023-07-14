@@ -2,7 +2,7 @@
 -- Table: Prices
 --   Prices in USD at given timestamps
 -- ----------------------------------------------------
-CREATE TABLE prices (
+CREATE TABLE IF NOT EXISTS prices (
        id           UUID                           NOT NULL UNIQUE DEFAULT gen_random_uuid(),
        stamp        TIMESTAMP                      NOT NULL UNIQUE,
        price        NUMERIC(16, 8)                 NOT NULL
@@ -12,7 +12,7 @@ CREATE TABLE prices (
 -- Table: Validators
 --   Lists validators we are monitoring
 -- ----------------------------------------------------
-CREATE TABLE validators (
+CREATE TABLE IF NOT EXISTS validators (
        id           BIGINT                         NOT NULL UNIQUE,
        pubkey       TEXT                           NOT NULL
 ) WITH (OIDS=FALSE);
@@ -22,7 +22,7 @@ CREATE UNIQUE INDEX validators_id_idx ON validators (id);
 -- Table: Slots
 --   Records slots including timestamps
 -- ----------------------------------------------------
-CREATE TABLE slots (
+CREATE TABLE IF NOT EXISTS slots (
        id           BIGINT                         NOT NULL UNIQUE,
        stamp        TIMESTAMP WITH TIME ZONE       NOT NULL,
        price_id     UUID                           REFERENCES prices(id),
@@ -33,7 +33,7 @@ CREATE TABLE slots (
 -- Table: Withdrawals
 --   Records withdrawals that have been finalized
 -- ----------------------------------------------------
-CREATE TABLE withdrawals (
+CREATE TABLE IF NOT EXISTS withdrawals (
        id           BIGINT                         NOT NULL UNIQUE,
        slot_id      BIGINT                         NOT NULL REFERENCES slots(id),
        validator_id BIGINT                         NOT NULL REFERENCES validators(id),
@@ -48,7 +48,7 @@ CREATE INDEX withdrawals_address_idx ON withdrawals USING HASH (address);
 -- Table: Summaries
 --   Summary table for popular homepage queries
 -- ----------------------------------------------------
-CREATE TABLE summaries (
+CREATE TABLE IF NOT EXISTS summaries (
        summary      TEXT                           NOT NULL,
        ordinal      INT                            NOT NULL,
        slot_id      BIGINT                         REFERENCES slots(id),
