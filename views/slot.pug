@@ -17,6 +17,7 @@ block content
           thead
             tr
               th.d-none.d-lg-block.d-xl-block Address
+              th Validator
               th ETH Amount
               th USD Value
           tbody
@@ -26,6 +27,8 @@ block content
                 td.d-none.d-lg-block.d-xl-block
                   a(href='/address/' + withdrawal.address)
                     code= withdrawal.address
+                td
+                  a(href='/validator/' + withdrawal.validator_id)= withdrawal.validator_id
                 td= Number(withdrawal.amount / 1000000000.0)
                 td(align='right')= usdFormatter.format((withdrawal.amount / 1000000000.0) * slot.price)
       .card-footer
