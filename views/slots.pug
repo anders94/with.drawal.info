@@ -4,11 +4,26 @@ block javascripts
   script(src='/js/lib/chart.js')
 
 block content
+  - let count = 0;
+  - let total = 0;
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
   .container
     .card.mt-4
       .card-header
         h2 Withdrawls per Slot
+        form.row.row-cols-lg-auto.g-3.align-items-center(method='post', action='/slots')
+          .col-12
+            label.visually-hidden(for='inlineFormInputGroupStart') Start
+            .input-group
+              .input-group-text Start
+              input#inlineFormInputGroupStart.form-control(type='date', name='start', value=start ? start : new Date().getFullYear() + '-01-01', min='2023-01-01')
+          .col-12
+            label.visually-hidden(for='inlineFormInputGroupEnd') End
+            .input-group
+              .input-group-text End
+              input#inlineFormInputGroupEnd.form-control(type='date', name='end', value=end ? end : new Date().toISOString().slice(0, 10))
+          .col-12
+            button.btn.btn-primary(type='submit') &gt;&gt;
       .card-body
         table.table.table-hover
           thead
@@ -19,6 +34,8 @@ block content
               th USD Total
           tbody
             each withdrawal in withdrawalsPerSlot
+              - count ++
+              - total += Number(withdrawal.usd_value)
               tr
                 td
                   a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
@@ -26,6 +43,11 @@ block content
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                 td= Number(withdrawal.eth_value)
                 td= usdFormatter.format(withdrawal.usd_value)
+      .card-footer
+        if count == 2500
+          h4.text-end ... More results (only showing first #{count})
+        else
+          h4.text-end Total: #{usdFormatter.format(total)}
 
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

@@ -10,7 +10,8 @@ block content
     h1 Dashboard
     .card.mt-4
       .card-header
-        h2 Validator Earnings
+        button.btn.btn-primary.float-end Add
+        h2 Validators
       .card-body
         table.table.table-hover
           thead
@@ -20,6 +21,7 @@ block content
               th.d-none.d-md-block.d-lg-block.d-xl-none Pub Key
               th.d-none.d-xl-block Pub Key
               th Payouts
+              th
           tbody
             each validator, index in validators
               - total += Number(validator.total)
@@ -32,5 +34,7 @@ block content
                 td.d-none.d-xl-block
                   code= validator.pubkey.substr(0, 32) + '...' + validator.pubkey.substr(validator.pubkey.length -32)
                 td(align='right')= usdFormatter.format(validator.total)
+                td
+                  button.btn.btn-danger Del
       .card-footer
         h4.text-end Total: #{usdFormatter.format(total)}

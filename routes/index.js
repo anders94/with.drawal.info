@@ -103,6 +103,7 @@ router.post('/search', search.post);
 router.get('/validator/:id', validator.get);
 
 router.get('/slots/', slot.get);
+router.post('/slots/', slot.post);
 router.get('/slot/:id', slot.id.get);
 
 router.get('/address/:address', address.get);
