@@ -1,34 +1,24 @@
 const db = require('../../db');
+const id = require('./id');
 
 module.exports = {
+    id: id,
     get: async (req, res, next) => {
 	try {
-	    const { id } = req.params;
-
-	    if (!id)
-		throw new Error('Missing slot id');
-
 	    const s = await db.query(
 		`SELECT
-                   s.id, s.stamp, COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
-                 FROM slots s
-                   LEFT JOIN prices p ON s.price_id = p.id
-                 WHERE s.id = $1`, [id]);
-
-	    if (s.rows.length != 1)
-		throw new Error('Slot not in database!');
-
-	    const w = await db.query(
-		`SELECT
-                   id, validator_id, address, amount
-                 FROM withdrawals
-                 WHERE slot_id = $1
-                 ORDER BY id ASC`, [id]
-	    );
-	    res.render('slot', {
-		slot: s.rows[0],
-		withdrawals: w.rows,
-		page: 'slot'
+                   w.slot_id, s.stamp, SUM(w.amount) / 1000000000.0 AS eth_value,
+                   (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (SUM(w.amount) / 1000000000.0) AS usd_value
+                 FROM withdrawals w
+                   LEFT JOIN slots s ON w.slot_id = s.id
+                 GROUP BY
+                   w.slot_id, s.stamp
+                 ORDER BY
+                   w.slot_id DESC
+                 LIMIT 100`);
+	    res.render('slots', {
+		withdrawalsPerSlot: s.rows,
+		page: 'slots'
 	    });
 
 	}

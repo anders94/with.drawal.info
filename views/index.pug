@@ -29,7 +29,7 @@ block content
                     td= Number(withdrawal.eth_amount)
                     td= usdFormatter.format(withdrawal.usd_amount)
           .card-footer
-            a.btn.btn-primary.float-end(href='/withdrawals') More &gt;&gt;
+            a.btn.btn-primary.float-end(href='/withdrawals') More Withdrawals &gt;&gt;
       .col
         .card.mt-4
           .card-header
@@ -52,6 +52,8 @@ block content
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_value)
                     td= usdFormatter.format(withdrawal.usd_value)
+          .card-footer
+            a.btn.btn-primary.float-end(href='/slots') More Slots &gt;&gt;
     .row
       .col
         .card.mt-4

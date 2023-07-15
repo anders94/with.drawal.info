@@ -1,0 +1,32 @@
+extends layout
+
+block javascripts
+  script(src='/js/lib/chart.js')
+
+block content
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  .container
+    .card.mt-4
+      .card-header
+        h2 Withdrawls per Slot
+      .card-body
+        table.table.table-hover
+          thead
+            tr
+              th Slot
+              th Date
+              th ETH Total
+              th USD Total
+          tbody
+            each withdrawal in withdrawalsPerSlot
+              tr
+                td
+                  a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
+                td
+                  span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
+                td= Number(withdrawal.eth_value)
+                td= usdFormatter.format(withdrawal.usd_value)
+
+  script.
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
