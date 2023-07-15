@@ -28,7 +28,8 @@
                     label(for='signupPassword') Password
                     .invalid-tooltip Enter a password to secure your account.
                   .form-floating
-                    button.btn.btn-primary.float-end(type='submit') Signup
+                    //button.btn.btn-primary.float-end(type='submit') Signup
+                    button.btn.btn-secondary.float-end(type='submit') Signup (not yet implemented)
             #nav-login.tab-pane.show.active(role='tabpanel', aria-labelledby='nav-login-tab', tabindex=0)
               form#loginForm.needs-validation(method='post', action='/authenticate/login', novalidate)
                 .p-2
@@ -52,12 +53,13 @@
                     label(for='forgotEmail') Email Address
                     .invalid-tooltip Please enter the email address you used when you signed up!
                   .form-floating
-                    button.btn.btn-primary.float-end(type='submit') Send Reset Link
-      .modal-footer
-      .modal-header
+                    //button.btn.btn-primary.float-end(type='submit') Send Reset Link
+                    button.btn.btn-secondary.float-end(type='submit') Send Reset Link (not yet implemented)
+      //.modal-footer
+      //.modal-header
         h1#accountModalLabel.modal-title.fs-5 Wallet Authentication
         button.btn-close(type='button', data-bs-dismiss='modal', aria-label='Close')
-      .modal-body
+      //.modal-body
         button#connect.btn.btn-primary.float-end(type='button', onClick='siwe') Sign-In with Ethereum
 
 script.

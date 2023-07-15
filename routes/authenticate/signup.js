@@ -4,9 +4,10 @@ module.exports = {
     post: async (req, res, next) => {
         const { fullName, signupEmail, signupPassword } = req.body;
 
-	console.log(fullName, signupEmail, signupPassword);
+	console.log('signup', fullName, signupEmail, 'xxx');
 
-        res.redirect('/');
+	res.render('error', {message: 'Sorry, signup isn\'t implemented yet. Please check back soon.'});
+        //res.redirect('/');
 
     }
 

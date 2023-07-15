@@ -4,7 +4,7 @@ module.exports = {
     post: async (req, res, next) => {
         const { forgotEmail } = req.body;
 
-	console.log(forgotEmail);
+	console.log('forgot password', forgotEmail);
 
         res.redirect('/');
 
