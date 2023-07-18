@@ -9,7 +9,7 @@ block content
   .container
     .card.mt-4
       .card-header
-        h2 Latest Withdrawals
+        h2 Withdrawals
         form.row.row-cols-lg-auto.g-3.align-items-center(method='post', action='/withdrawals')
           .col-12
             label.visually-hidden(for='inlineFormInputGroupStart') Start
@@ -40,9 +40,10 @@ block content
               tr
                 td
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
-                td.d-none.d-md-block= withdrawal.slot_id
+                td.d-none.d-md-block
+                  a(href='/slot/'+withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
                 td
-                  a(href='/validator/'+withdrawal.validator_id) #{withdrawal.validator_id}
+                  a(href='/validator/'+withdrawal.validator_id)= Number(withdrawal.validator_id).toLocaleString('en')
                 td.d-none.d-lg-block
                   code= withdrawal.address
                 td= Number(withdrawal.amount)
