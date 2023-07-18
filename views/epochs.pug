@@ -1,0 +1,41 @@
+extends layout
+
+block javascripts
+
+block content
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  .container
+    .card.mt-4
+      .card-header
+        h2 Epochs
+        form.row.row-cols-lg-auto.g-3.align-items-center(method='post', action='/epochs')
+          .col-12
+            label.visually-hidden(for='inlineFormInputGroupStart') Start
+            .input-group
+              .input-group-text Start
+              input#inlineFormInputGroupStart.form-control(type='date', name='start', value=start ? start : new Date().getFullYear() + '-01-01', min='2023-01-01')
+          .col-12
+            label.visually-hidden(for='inlineFormInputGroupEnd') End
+            .input-group
+              .input-group-text End
+              input#inlineFormInputGroupEnd.form-control(type='date', name='end', value=end ? end : new Date().toISOString().slice(0, 10))
+          .col-12
+            button.btn.btn-primary(type='submit') &gt;&gt;
+      .card-body
+        table.table.table-hover
+          thead
+            tr
+              th Epoch
+              th Withdrawals
+              th ETH Total
+              th USD Total
+          tbody
+            each withdrawal in withdrawalsPerEpoch
+              tr
+                td
+                  a(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
+                td= withdrawal.slots
+                td= Number(withdrawal.eth_amount)
+                td= usdFormatter.format(withdrawal.usd_amount)
+      .card-footer
+        h4.text-end Total: #{usdFormatter.format(usd_total)}

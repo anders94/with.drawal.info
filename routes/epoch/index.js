@@ -17,6 +17,7 @@ module.exports = {
                    LIMIT 4096
                  )
                  SELECT
+                   COUNT(sp.slot_id) AS slots,
                    (sp.slot_id / 32) AS epoch,
                    SUM(w.amount / 1000000000.0) AS eth_amount,
                    SUM(w.amount * sp.price / 1000000000.0) AS usd_amount
@@ -61,6 +62,7 @@ module.exports = {
                    LIMIT 4096
                  )
                  SELECT
+                   COUNT(sp.slot_id) AS slots,
                    (sp.slot_id / 32) AS epoch,
                    SUM(w.amount / 1000000000.0) AS eth_amount,
                    SUM(w.amount * sp.price / 1000000000.0) AS usd_amount
