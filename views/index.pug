@@ -16,6 +16,7 @@ block content
               thead
                 tr
                   th Slot
+                  th Epoch
                   th Date
                   th ETH Value
                   th USD Value
@@ -23,7 +24,9 @@ block content
                 each withdrawal in latestWithdrawals
                   tr
                     td
-                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
+                      a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
+                    td
+                      a(href='/epoch/' + Math.floor(withdrawal.slot_id / 32))= Math.floor(withdrawal.slot_id / 32).toLocaleString('en')
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_amount)
@@ -33,27 +36,26 @@ block content
       .col
         .card.mt-4
           .card-header
-            h2 Withdrawls per Slot
+            h2 Withdrawls per Epoch
           .card-body
             canvas#chart
             table.table.table-hover
               thead
                 tr
-                  th Slot
-                  th Date
+                  th Epoch
+                  th Withdrawals
                   th ETH Total
                   th USD Total
               tbody
-                each withdrawal in withdrawalsPerSlot
+                each withdrawal in withdrawalsPerEpoch
                   tr
                     td
-                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
-                    td
-                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
-                    td= Number(withdrawal.eth_value)
-                    td= usdFormatter.format(withdrawal.usd_value)
+                      a(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
+                    td= withdrawal.slots
+                    td= Number(withdrawal.eth_amount)
+                    td= usdFormatter.format(withdrawal.usd_amount)
           .card-footer
-            a.btn.btn-primary.float-end(href='/slots') More Slots &gt;&gt;
+            a.btn.btn-primary.float-end(href='/slots') More Epochs &gt;&gt;
     .row
       .col
         .card.mt-4
@@ -64,6 +66,7 @@ block content
               thead
                 tr
                   th Slot
+                  th Epoch
                   th Date
                   th Validator
                   th ETH Value
@@ -72,11 +75,13 @@ block content
                 each withdrawal in largestWithdrawals
                   tr
                     td
-                      a(href='/slot/' + withdrawal.slot_id)= withdrawal.slot_id
+                      a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
+                    td
+                      a(href='/epoch/' + Math.floor(withdrawal.slot_id / 32))= Math.floor(withdrawal.slot_id / 32).toLocaleString('en')
                     td
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td
-                      a(href='/validator/' + withdrawal.validator_id)= withdrawal.validator_id
+                      a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
                     td= Number(withdrawal.eth_amount)
                     td= usdFormatter.format(withdrawal.usd_amount)
 
@@ -84,15 +89,15 @@ block content
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-    $.ajax({ type: 'GET', url: '/api/withdrawals.json',
+    $.ajax({ type: 'GET', url: '/api/epochs.json',
              dataType: 'json', success: (data) => {
         new Chart(document.getElementById('chart'), {
           type: 'line',
           data: {
-            labels: data.map(row => row.slot_id),
+            labels: data.map(row => row.epoch),
             datasets: [{
-              label: 'Total Withdrawan',
-              data: data.map(row => row.usd_total),
+              label: 'Withdrawals by Epoch',
+              data: data.map(row => row.usd_amount),
               borderWidth: 1
             }]
           },
@@ -111,7 +116,7 @@ block content
               const [{
                 index
               }] = activePoints;
-              window.location = '/slot/' + data[index].slot_id;
+              window.location = '/epoch/' + data[index].epoch;
             },
             plugins: {
               legend: {
@@ -119,7 +124,7 @@ block content
               },
               title: {
                 display: true,
-                text: 'Withdrawals by Slot'
+                text: 'Withdrawals by Epoch'
               }
             }
           }

@@ -7,23 +7,35 @@ const withdrawals = require('./withdrawals');
 const search = require('./search');
 const validator = require('./validator');
 const slot = require('./slot');
+const epoch = require('./epoch');
 const address = require('./address');
 const authenticate = require('./authenticate');
 const api = require('./api');
 
 router.get('/', async (req, res, next) => {
     try {
-	const perSlot = await db.query(
-	    `SELECT
-               w.slot_id, s.stamp, SUM(w.amount) / 1000000000.0 AS eth_value,
-               (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (SUM(w.amount) / 1000000000.0) AS usd_value
-             FROM withdrawals w
-               LEFT JOIN slots s ON w.slot_id = s.id
-             GROUP BY
-               w.slot_id, s.stamp
-             ORDER BY
-               w.slot_id DESC
-             LIMIT 10`);
+	const perEpoch = await db.query(
+	    `WITH slot_prices AS (
+               SELECT
+                 s.id AS slot_id,
+                 COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+               FROM
+                 slots s
+                   LEFT JOIN prices p ON s.price_id = p.id
+               ORDER BY slot_id DESC
+               LIMIT 2048
+             )
+             SELECT
+               COUNT(sp.slot_id) AS slots,
+               (sp.slot_id / 32) AS epoch,
+               SUM(w.amount / 1000000000.0) AS eth_amount,
+               SUM(w.amount * sp.price / 1000000000.0) AS usd_amount
+             FROM
+               slot_prices sp
+                 LEFT JOIN withdrawals w ON w.slot_id = sp.slot_id
+             GROUP BY epoch
+             ORDER BY epoch DESC
+             LIMIT 20`);
 	const latest = await db.query(
 	    `SELECT
                s.stamp, w.id, v.id AS validator_id, w.slot_id, w.address, w.amount / 1000000000.0 AS eth_amount,
@@ -36,7 +48,7 @@ router.get('/', async (req, res, next) => {
                s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
              ORDER BY
                 w.slot_id DESC
-             LIMIT 17`);
+             LIMIT 27`);
 	const largest = await db.query(
 	    `SELECT *
              FROM summaries su
@@ -44,7 +56,7 @@ router.get('/', async (req, res, next) => {
              WHERE summary = $1
              LIMIT 25`, ['largest-withdrawals']);
 	res.render('index', {
-	    withdrawalsPerSlot: perSlot.rows,
+	    withdrawalsPerEpoch: perEpoch.rows,
 	    latestWithdrawals: latest.rows,
 	    largestWithdrawals: largest.rows,
 	    page: 'index'
@@ -106,6 +118,10 @@ router.get('/slots/', slot.get);
 router.post('/slots/', slot.post);
 router.get('/slot/:id', slot.id.get);
 
+router.get('/epochs/', epoch.get);
+router.post('/epochs/', epoch.post);
+router.get('/epoch/:id', epoch.id.get);
+
 router.get('/address/:address', address.get);
 
 router.post('/authenticate/signup', authenticate.signup.post);
@@ -116,5 +132,6 @@ router.get('/authenticate/nonce', cors(), authenticate.nonce.get);
 router.post('/authenticate/verify', cors(), authenticate.verify.post);
 
 router.get('/api/withdrawals.json', api.withdrawals.get);
+router.get('/api/epochs.json', api.epochs.get);
 
 module.exports = router;

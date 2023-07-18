@@ -8,8 +8,9 @@ block content
   .container
     .card.mt-4
       .card-header
-        h2 Slot #{slot.id}
-        h4 #{datefns.formatISO9075(slot.stamp)} (#{datefns.formatDistance(slot.stamp, new Date(), {addSuffix: true})})
+        h2 Slot #{parseInt(slot.id).toLocaleString('en')}
+        h4 Epoch #{Math.floor(slot.id / 32).toLocaleString('en')}
+        h6 #{datefns.formatISO9075(slot.stamp)} (#{datefns.formatDistance(slot.stamp, new Date(), {addSuffix: true})})
         p Price of ETH then was: #{usdFormatter.format(slot.price)}
       .card-body
         h4 Withdrawals
@@ -28,7 +29,7 @@ block content
                   a(href='/address/' + withdrawal.address)
                     code= withdrawal.address
                 td
-                  a(href='/validator/' + withdrawal.validator_id)= withdrawal.validator_id
+                  a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
                 td= Number(withdrawal.amount / 1000000000.0)
                 td(align='right')= usdFormatter.format((withdrawal.amount / 1000000000.0) * slot.price)
       .card-footer

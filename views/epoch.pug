@@ -1,0 +1,38 @@
+extends layout
+
+block javascripts
+
+block content
+  - let usd_total = 0; let eth_total = 0;
+  - addresses = {}; slots = {};
+  - for (let x=0; x<withdrawals.length; x++) { const withdrawal = withdrawals[x]; usd_total += Number(withdrawal.usd_amount); eth_total += Number(withdrawal.eth_amount); addresses[withdrawal.address] = 1; slots[withdrawal.slot_id] = 1 }
+  - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  .container
+    .card.mt-4
+      .card-header
+        h2 Epoch #{Number(epoch_id).toLocaleString('en')}
+        h4 #{Object.keys(slots).length} slots contaning #{withdrawals.length} withdrawals to #{Object.keys(addresses).length} unique addresses
+        p #{usdFormatter.format(usd_total)} (#{Number(eth_total)} ETH)
+      .card-body
+        table.table
+          thead
+            tr
+              td Slot
+              th.d-none.d-lg-block.d-xl-block Address
+              th Validator
+              th ETH Amount
+              th USD Value
+          tbody
+            each withdrawal in withdrawals
+              tr
+                td
+                   a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
+                td.d-none.d-lg-block.d-xl-block
+                  a(href='/address/' + withdrawal.address)
+                    code= withdrawal.address
+                td
+                  a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
+                td= Number(withdrawal.eth_amount)
+                td(align='right')= usdFormatter.format(withdrawal.usd_amount)
+      .card-footer
+        h4.text-end Total: #{usdFormatter.format(usd_total)}
