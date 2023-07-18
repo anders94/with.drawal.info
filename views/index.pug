@@ -104,16 +104,12 @@ block content
             responsive: true,
             scales: {
               y: {
+                type: 'logarithmic',
                 ticks: {
                   callback: function(value, index, ticks) {
                     return '$' + Number(value).toLocaleString('en');
                   }
                 }
-              },
-              logScale: {
-                display: false,
-                type: 'logarithmic',
-                position: 'right'
               }
             },
             onClick(e) {
