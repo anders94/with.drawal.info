@@ -89,14 +89,13 @@ block content
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
-    $.ajax({ type: 'GET', url: '/api/epochs.json',
-             dataType: 'json', success: (data) => {
+    $.ajax({type: 'GET', url: '/api/epochs.json', dataType: 'json', success: (data) => {
         new Chart(document.getElementById('chart'), {
           type: 'line',
           data: {
-            labels: data.map(row => row.epoch),
+            labels: data.map(row => Number(row.epoch).toLocaleString('en')),
             datasets: [{
-              label: 'Withdrawals by Epoch',
+              label: 'Withdrawals',
               data: data.map(row => row.usd_amount),
               borderWidth: 1
             }]
@@ -104,27 +103,46 @@ block content
           options: {
             responsive: true,
             scales: {
+              y: {
+                ticks: {
+                  callback: function(value, index, ticks) {
+                    return '$' + Number(value).toLocaleString('en');
+                  }
+                }
+              },
               logScale: {
+                display: false,
                 type: 'logarithmic',
-                position: 'left'
+                position: 'right'
               }
             },
             onClick(e) {
-              const activePoints = this.getElementsAtEventForMode(e, 'nearest', {
-                intersect: true
-              }, false);
-              const [{
-                index
-              }] = activePoints;
+              const activePoints = this.getElementsAtEventForMode(e, 'nearest', {intersect: true}, false);
+              const [{index}] = activePoints;
               window.location = '/epoch/' + data[index].epoch;
             },
             plugins: {
               legend: {
-                position: 'top',
+                display: false
               },
               title: {
                 display: true,
                 text: 'Withdrawals by Epoch'
+              },
+              tooltip: {
+                callbacks: {
+                  label: function(context) {
+                    let label = context.dataset.label || '';
+
+                    if (label) {
+                        label += ': ';
+                    }
+                    if (context.parsed.y !== null) {
+                        label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.parsed.y);
+                    }
+                    return label;
+                  }
+                }
               }
             }
           }
