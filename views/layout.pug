@@ -19,6 +19,14 @@ html(lang='en', data-bs-theme='dark')
     script(src='/js/lib/jquery.min.js')
     block javascripts
 
+  // Google tag (gtag.js)
+  script(async, src='https://www.googletagmanager.com/gtag/js?id=G-FDGT8R8L8N')
+  script.
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-FDGT8R8L8N');
+
   body
     if !session || !session.user
       include includes/auth
