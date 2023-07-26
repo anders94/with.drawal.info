@@ -53,6 +53,8 @@ CREATE TABLE IF NOT EXISTS summaries (
        ordinal      INT                            NOT NULL,
        slot_id      BIGINT                         REFERENCES slots(id),
        validator_id BIGINT                         REFERENCES validators(id),
+       slots        INT,
+       epoch        INT,
        address      TEXT,
        eth_amount   NUMERIC(32, 18),
        usd_amount   NUMERIC(18, 2)

@@ -60,30 +60,23 @@ block content
       .col
         .card.mt-4
           .card-header
-            h2 Largest Withdrawals
+            h2 Largest Withdrawals by Epoch
           .card-body
             table.table.table-hover
               thead
                 tr
-                  th Slot
                   th Epoch
-                  th Date
-                  th Validator
+                  th Slots
                   th ETH Value
                   th USD Value
               tbody
-                each withdrawal in largestWithdrawals
+                each summary in largestWithdrawals
                   tr
                     td
-                      a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
-                    td
-                      a(href='/epoch/' + Math.floor(withdrawal.slot_id / 32))= Math.floor(withdrawal.slot_id / 32).toLocaleString('en')
-                    td
-                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
-                    td
-                      a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
-                    td= Number(withdrawal.eth_amount)
-                    td= usdFormatter.format(withdrawal.usd_amount)
+                      a(href='/epoch/' + summary.epoch)= Number(summary.epoch).toLocaleString('en')
+                    td= Number(summary.slots).toLocaleString('en')
+                    td= Number(summary.eth_amount)
+                    td= usdFormatter.format(summary.usd_amount)
 
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

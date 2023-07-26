@@ -39,6 +39,7 @@ const db = require('../db');
     await db.query('COMMIT');
     */
 
+    /*
     // largest withdrawals
     tmp = await db.query(
 	`SELECT
@@ -63,6 +64,44 @@ const db = require('../db');
                ($1, $2, $3, $4, $5, $6, $7)`,
 	    ['largest-withdrawals', i, row.slot_id, row.validator_id, row.address, row.eth_amount, row.usd_amount]);
 	
+    }
+    await db.query('COMMIT');
+    */
+
+    // largest withdrawals per epoch
+    tmp = await db.query(
+	`WITH slot_prices AS (
+               SELECT
+                 s.id AS slot_id,
+                 COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+               FROM
+                 slots s
+                   LEFT JOIN prices p ON s.price_id = p.id
+             )
+             SELECT
+               COUNT(sp.slot_id) AS slots,
+               (sp.slot_id / 32) AS epoch,
+               SUM(w.amount / 1000000000.0) AS eth_amount,
+               SUM(w.amount * sp.price / 1000000000.0) AS usd_amount
+             FROM
+               slot_prices sp
+                 LEFT JOIN withdrawals w ON w.slot_id = sp.slot_id
+             GROUP BY epoch
+             ORDER BY usd_amount DESC
+             LIMIT 100;`);
+
+    await db.query('BEGIN');
+    await db.query('DELETE FROM summaries WHERE summary = $1', ['largest-withdrawals-by-epoch']);
+    for (let i=0; i<tmp.rows.length; i++) {
+	const row = tmp.rows[i];
+	console.log('largest-withdrawals-by-epoch', i, row.slots, row.epoch, row.eth_amount, row.usd_amount);
+	await db.query(
+	    `INSERT INTO summaries
+               (summary, ordinal, slots, epoch, eth_amount, usd_amount)
+             VALUES
+               ($1, $2, $3, $4, $5, $6)`,
+	    ['largest-withdrawals-by-epoch', i, row.slots, row.epoch, row.eth_amount, row.usd_amount]);
+
     }
     await db.query('COMMIT');
 
