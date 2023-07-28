@@ -12,7 +12,7 @@ block content
       .card-header
         h2 Epoch #{Number(epoch_id).toLocaleString('en')}
         h4 #{Object.keys(slots).length} slots contaning #{withdrawals.length} withdrawals to #{Object.keys(addresses).length} unique addresses
-        p #{usdFormatter.format(usd_total)} (#{Number(eth_total)} ETH)
+        p #{Number(eth_total)} ETH | #{usdFormatter.format(usd_total)}
       .card-body
         table.table
           thead
@@ -28,10 +28,16 @@ block content
                 td
                    a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
                 td.d-none.d-lg-block.d-xl-block
-                  a(href='/address/' + withdrawal.address)
-                    code= withdrawal.address
+                  if withdrawal.address
+                    a(href='/address/' + withdrawal.address)
+                      code= withdrawal.address
+                  else
+                    p no withdrawal this slot
                 td
-                  a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
+                  if withdrawal.address
+                    a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
+                  else
+                    p N/A
                 td= Number(withdrawal.eth_amount)
                 td(align='right')= usdFormatter.format(withdrawal.usd_amount)
       .card-footer
