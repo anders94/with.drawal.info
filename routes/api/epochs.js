@@ -24,6 +24,8 @@ module.exports = {
                  ORDER BY epoch DESC
                  LIMIT 500`);
 
+	    w.rows.pop(); // remove last element which is probably an incomplete epoch
+
 	    res.json(w.rows);
 
 	}

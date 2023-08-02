@@ -51,10 +51,10 @@ router.get('/', async (req, res, next) => {
              LIMIT 27`);
 	const largest = await db.query(
 	    `SELECT *
-             FROM summaries su
-               LEFT JOIN slots sl ON su.slot_id = sl.id
+             FROM summaries
              WHERE summary = $1
-             LIMIT 25`, ['largest-withdrawals']);
+             ORDER BY ordinal ASC
+             LIMIT 25`, ['largest-withdrawals-by-epoch']);
 	res.render('index', {
 	    withdrawalsPerEpoch: perEpoch.rows,
 	    latestWithdrawals: latest.rows,

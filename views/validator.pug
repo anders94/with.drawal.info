@@ -26,7 +26,8 @@ block content
               tr
                 td
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
-                td= withdrawal.slot_id
+                td
+                  a(href='/slot/' + withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
                 td.d-none.d-lg-block.d-xl-block
                   a(href='/address/' + withdrawal.address)
                     code= withdrawal.address

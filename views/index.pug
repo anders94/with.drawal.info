@@ -10,6 +10,29 @@ block content
       .col
         .card.mt-4
           .card-header
+            h2 Withdrawls per Epoch
+          .card-body
+            canvas#chart
+            table.table.table-hover
+              thead
+                tr
+                  th Epoch
+                  th.d-none.d-lg-block.d-xl-block Withdrawals
+                  th ETH Total
+                  th USD Total
+              tbody
+                each withdrawal in withdrawalsPerEpoch
+                  tr
+                    td
+                      a(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
+                    td.d-none.d-lg-block.d-xl-block= withdrawal.slots
+                    td= Number(withdrawal.eth_amount)
+                    td= usdFormatter.format(withdrawal.usd_amount)
+          .card-footer
+            a.btn.btn-primary.float-end(href='/epochs') More Epochs &gt;&gt;
+      .col
+        .card.mt-4
+          .card-header
             h2 Latest Withdrawls
           .card-body
             table.table.table-hover
@@ -17,7 +40,7 @@ block content
                 tr
                   th Slot
                   th Epoch
-                  th Date
+                  th.d-none.d-lg-block.d-xl-block Date
                   th ETH Value
                   th USD Value
               tbody
@@ -27,63 +50,33 @@ block content
                       a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
                     td
                       a(href='/epoch/' + Math.floor(withdrawal.slot_id / 32))= Math.floor(withdrawal.slot_id / 32).toLocaleString('en')
-                    td
+                    td.d-none.d-lg-block.d-xl-block
                       span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
                     td= Number(withdrawal.eth_amount)
                     td= usdFormatter.format(withdrawal.usd_amount)
           .card-footer
             a.btn.btn-primary.float-end(href='/withdrawals') More Withdrawals &gt;&gt;
-      .col
-        .card.mt-4
-          .card-header
-            h2 Withdrawls per Epoch
-          .card-body
-            canvas#chart
-            table.table.table-hover
-              thead
-                tr
-                  th Epoch
-                  th Withdrawals
-                  th ETH Total
-                  th USD Total
-              tbody
-                each withdrawal in withdrawalsPerEpoch
-                  tr
-                    td
-                      a(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
-                    td= withdrawal.slots
-                    td= Number(withdrawal.eth_amount)
-                    td= usdFormatter.format(withdrawal.usd_amount)
-          .card-footer
-            a.btn.btn-primary.float-end(href='/epochs') More Epochs &gt;&gt;
     .row
       .col
         .card.mt-4
           .card-header
-            h2 Largest Withdrawals
+            h2 Largest Withdrawals by Epoch
           .card-body
             table.table.table-hover
               thead
                 tr
-                  th Slot
                   th Epoch
-                  th Date
-                  th Validator
+                  th.d-none.d-lg-block.d-xl-block Slots
                   th ETH Value
                   th USD Value
               tbody
-                each withdrawal in largestWithdrawals
+                each summary in largestWithdrawals
                   tr
                     td
-                      a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
-                    td
-                      a(href='/epoch/' + Math.floor(withdrawal.slot_id / 32))= Math.floor(withdrawal.slot_id / 32).toLocaleString('en')
-                    td
-                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
-                    td
-                      a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
-                    td= Number(withdrawal.eth_amount)
-                    td= usdFormatter.format(withdrawal.usd_amount)
+                      a(href='/epoch/' + summary.epoch)= Number(summary.epoch).toLocaleString('en')
+                    td.d-none.d-lg-block.d-xl-block= Number(summary.slots).toLocaleString('en')
+                    td= Number(summary.eth_amount)
+                    td= usdFormatter.format(summary.usd_amount)
 
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
