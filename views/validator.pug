@@ -17,9 +17,9 @@ block content
             tr
               th Date
               th Slot
-              th.d-none.d-lg-block.d-xl-block Address
-              th ETH Amount
-              th USD Value
+              th.d-none.d-sm-block Address
+              th.d-none.d-md-block ETH Amount
+              th USD
           tbody
             each withdrawal in withdrawals
               - total += Number(withdrawal.usd_value)
@@ -28,10 +28,10 @@ block content
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
                 td
                   a(href='/slot/' + withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
-                td.d-none.d-lg-block.d-xl-block
+                td.d-none.d-sm-block
                   a(href='/address/' + withdrawal.address)
                     code= withdrawal.address
-                td= Number(withdrawal.amount)
+                td.d-none.d-lg-block= Number(withdrawal.amount)
                 td(align='right')= usdFormatter.format(withdrawal.usd_value)
       .card-footer
         h4.text-end Total: #{usdFormatter.format(total)}
