@@ -34,7 +34,7 @@ block content
                 td= Number(withdrawal.amount)
                 td(align='right')= usdFormatter.format(withdrawal.usd_value)
       .card-footer
-        if count == 1000
+        if count == 2500
           h4.text-end ... only showing fitst #{count} results
         else
           h4.text-end Total: #{usdFormatter.format(total)}
