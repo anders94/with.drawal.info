@@ -16,7 +16,7 @@ module.exports = {
                  WHERE s.id = $1`, [id]);
 
 	    if (s.rows.length != 1)
-		throw new Error('Slot not in database!');
+		throw new Error('Slot ' + id + ' not in database!');
 
 	    const w = await db.query(
 		`SELECT
