@@ -30,13 +30,11 @@ const http = require('http').createServer(app);
 
     // Request logging middleware
     app.use((req, res, next) => {
-	const timestamp = new Date().toISOString();
+	const ip = req.headers['x-forwarded-for'] || req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
 	const method = req.method;
 	const url = req.url;
-	const ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
-	const userAgent = req.get('User-Agent') || 'Unknown';
 	
-	console.log(`[${timestamp}] ${method} ${url} - IP: ${ip} - User-Agent: ${userAgent}`);
+	console.log(`${ip} ${method} ${url}`);
 	next();
     });
 
