@@ -28,6 +28,18 @@ const http = require('http').createServer(app);
 	secret: process.env.SESSIONSECRET || 'd46e4e10115103fa32780d259d0705e4'
     }));
 
+    // Request logging middleware
+    app.use((req, res, next) => {
+	const timestamp = new Date().toISOString();
+	const method = req.method;
+	const url = req.url;
+	const ip = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+	const userAgent = req.get('User-Agent') || 'Unknown';
+	
+	console.log(`[${timestamp}] ${method} ${url} - IP: ${ip} - User-Agent: ${userAgent}`);
+	next();
+    });
+
     // Middleware to block requests until cache is ready
     app.use((req, res, next) => {
 	if (req.path === '/' && !homepageCache.isReady()) {
