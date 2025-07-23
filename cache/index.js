@@ -6,6 +6,7 @@ class HomepageCache {
             withdrawalsPerEpoch: [],
             latestWithdrawals: [],
             largestWithdrawals: [],
+            epochsData: [],
             lastUpdated: null,
             isReady: false
         };
@@ -28,8 +29,8 @@ class HomepageCache {
         try {
             console.log('Refreshing homepage cache...');
             
-            // Execute all three queries in parallel for better performance
-            const [perEpochResult, latestResult, largestResult] = await Promise.all([
+            // Execute all four queries in parallel for better performance
+            const [perEpochResult, latestResult, largestResult, epochsResult] = await Promise.all([
                 // perEpoch query
                 db.query(
                     `WITH slot_prices AS (
@@ -79,14 +80,42 @@ class HomepageCache {
                      ORDER BY ordinal ASC
                      LIMIT 25`, 
                     ['largest-withdrawals-by-epoch']
+                ),
+                
+                // epochs API query
+                db.query(
+                    `WITH slot_prices AS (
+                       SELECT
+                         s.id AS slot_id,
+                         COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+                       FROM
+                         slots s
+                           LEFT JOIN prices p ON s.price_id = p.id
+                       ORDER BY slot_id DESC
+                       LIMIT 4096
+                     )
+                     SELECT
+                       (sp.slot_id / 32) AS epoch,
+                       SUM(w.amount * sp.price / 1000000000.0) AS usd_amount
+                     FROM
+                       slot_prices sp
+                         LEFT JOIN withdrawals w ON w.slot_id = sp.slot_id
+                     GROUP BY epoch
+                     ORDER BY epoch DESC
+                     LIMIT 500`
                 )
             ]);
+
+            // Process epochs data (remove last element which is probably incomplete)
+            const epochsData = epochsResult.rows.slice(); // Create a copy
+            epochsData.pop(); // remove last element which is probably an incomplete epoch
 
             // Update cache with new data
             this.cache = {
                 withdrawalsPerEpoch: perEpochResult.rows,
                 latestWithdrawals: latestResult.rows,
                 largestWithdrawals: largestResult.rows,
+                epochsData: epochsData,
                 lastUpdated: new Date(),
                 isReady: true
             };
@@ -105,6 +134,10 @@ class HomepageCache {
             latestWithdrawals: this.cache.latestWithdrawals,
             largestWithdrawals: this.cache.largestWithdrawals
         };
+    }
+
+    getEpochsData() {
+        return this.cache.epochsData;
     }
 
     isReady() {
