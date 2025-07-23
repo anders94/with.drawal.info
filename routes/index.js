@@ -14,51 +14,13 @@ const api = require('./api');
 
 router.get('/', async (req, res, next) => {
     try {
-	const perEpoch = await db.query(
-	    `WITH slot_prices AS (
-               SELECT
-                 s.id AS slot_id,
-                 COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
-               FROM
-                 slots s
-                   LEFT JOIN prices p ON s.price_id = p.id
-               ORDER BY slot_id DESC
-               LIMIT 2048
-             )
-             SELECT
-               COUNT(sp.slot_id) AS slots,
-               (sp.slot_id / 32) AS epoch,
-               SUM(w.amount / 1000000000.0) AS eth_amount,
-               SUM(w.amount * sp.price / 1000000000.0) AS usd_amount
-             FROM
-               slot_prices sp
-                 LEFT JOIN withdrawals w ON w.slot_id = sp.slot_id
-             GROUP BY epoch
-             ORDER BY epoch DESC
-             LIMIT 20`);
-	const latest = await db.query(
-	    `SELECT
-               s.stamp, w.id, v.id AS validator_id, w.slot_id, w.address, w.amount / 1000000000.0 AS eth_amount,
-               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_amount
-             FROM
-               withdrawals w
-                 LEFT JOIN slots s ON w.slot_id = s.id
-                 LEFT JOIN validators v ON w.validator_id = v.id
-             GROUP BY
-               s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
-             ORDER BY
-                w.slot_id DESC
-             LIMIT 27`);
-	const largest = await db.query(
-	    `SELECT *
-             FROM summaries
-             WHERE summary = $1
-             ORDER BY ordinal ASC
-             LIMIT 25`, ['largest-withdrawals-by-epoch']);
+	// Get cached data instead of querying database
+	const cachedData = res.locals.homepageCache.getCachedData();
+	
 	res.render('index', {
-	    withdrawalsPerEpoch: perEpoch.rows,
-	    latestWithdrawals: latest.rows,
-	    largestWithdrawals: largest.rows,
+	    withdrawalsPerEpoch: cachedData.withdrawalsPerEpoch,
+	    latestWithdrawals: cachedData.latestWithdrawals,
+	    largestWithdrawals: cachedData.largestWithdrawals,
 	    page: 'index'
 	});
     }
