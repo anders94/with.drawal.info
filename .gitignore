@@ -6,3 +6,4 @@ notes.txt
 env/
 run
 log/
+.DS_Store

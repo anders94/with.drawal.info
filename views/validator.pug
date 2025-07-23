@@ -15,16 +15,16 @@ block content
         table.table
           thead
             tr
-              th Date
+              th.d-none.d-md-block Date
               th Slot
               th.d-none.d-sm-block Address
-              th.d-none.d-md-block ETH Amount
+              th.d-none.d-lg-block ETH Amount
               th USD
           tbody
             each withdrawal in withdrawals
               - total += Number(withdrawal.usd_value)
               tr
-                td
+                td.d-none.d-md-block
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
                 td
                   a(href='/slot/' + withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
