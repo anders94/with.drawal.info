@@ -4,7 +4,7 @@ const db = require('../db');
 const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 
 const delay = 10;
-const beaconURL = 'http://localhost:3500';
+const beaconURL = 'http://127.0.0.1:3500';
 
 (async () => {
     let tmp;

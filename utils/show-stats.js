@@ -1,15 +1,9 @@
 const pg = require('pg');
 const axios = require('axios');
+const config = require('../config');
 
 (async () => {
-    const client = new pg.Client({
-	host: '127.0.0.1',
-	port: 5432,
-	database: 'staking_dev',
-	user: 'staking',
-	password: process.env.DB_PASS,
-    });
-
+    const client = new pg.Client(config.postgres);
     await client.connect();
 
     let res;

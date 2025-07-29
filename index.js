@@ -5,6 +5,7 @@ const MemoryStore = require('memorystore')(session);
 const datefns = require('date-fns');
 const routes = require('./routes');
 const homepageCache = require('./cache');
+const priceUpdater = require('./priceUpdater');
 
 const app = express();
 const port = process.env.PORT ? process.env.PORT : 3000;
@@ -72,3 +73,11 @@ const http = require('http').createServer(app);
 	console.log(`Listening on ${host}:${port}`)
     });
 })();
+
+// periodically record spot price
+/*
+setInterval(async () => {
+    await priceUpdater.spot();
+
+}, 60 * 1000);
+*/

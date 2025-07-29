@@ -23,7 +23,7 @@ module.exports = {
                    s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
                  ORDER BY
                     w.slot_id DESC
-                 LIMIT 2500`, [address]
+                 LIMIT 5000`, [address]
 	    );
 	    res.render('address', {
 		address: address,

@@ -8,5 +8,9 @@ module.exports = {
 	debug: false
 
     },
+    ethrpc: {
+	url: process.env.ETHRPCURL || 'http://127.0.0.1:8545'
+
+    }
 
 }

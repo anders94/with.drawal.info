@@ -1,19 +1,14 @@
 const pg = require('pg');
 const axios = require('axios');
+const config = require('../config');
 
 (async () => {
-    const client = new pg.Client({
-	host: '127.0.0.1',
-	port: 5432,
-	database: 'staking_dev',
-	user: 'staking',
-	password: process.env.DB_PASS,
-    });
+    const client = new pg.Client(config.postgres);
 
     await client.connect();
 
-    const start = new Date('2023-06-01T00:00:00.000Z').getTime() / 1000;
-    const end = new Date('2023-07-01T00:00:00.000Z').getTime() / 1000;
+    const start = new Date('2025-03-01T00:00:00.000Z').getTime() / 1000;
+    const end = new Date('2025-04-01T00:00:00.000Z').getTime() / 1000;
 
     let res;
     res = await axios.get('https://api.coingecko.com/api/v3/coins/ethereum/market_chart/range?vs_currency=usd&from=' + start + '&to=' + end);

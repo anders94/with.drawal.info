@@ -1,15 +1,10 @@
 const pg = require('pg');
 const axios = require('axios');
 const sub = require('date-fns/sub');
+const config = require('../config');
 
 (async () => {
-    const client = new pg.Client({
-	host: '127.0.0.1',
-	port: 5432,
-	database: 'staking_dev',
-	user: 'staking',
-	password: process.env.DB_PASS,
-    });
+    const client = new pg.Client(config.postgres);
 
     try {
 	console.log('start', new Date());
@@ -36,6 +31,7 @@ const sub = require('date-fns/sub');
 
 	if (res.data && res.data.prices) {
 	    const prices = res.data.prices;
+	    console.log('prices', prices);
 	    for (const price of prices) {
 		console.log(' ', new Date(price[0]), price[1]);
 		res = await client.query('SELECT price, stamp FROM prices WHERE stamp = $1', [new Date(price[0])]);
