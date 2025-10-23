@@ -8,6 +8,8 @@ CREATE TABLE IF NOT EXISTS prices (
        price        NUMERIC(16, 8)                 NOT NULL
 ) WITH (OIDS=FALSE);
 
+CREATE INDEX idx_prices_stamp ON prices (stamp);
+
 -- ----------------------------------------------------
 -- Table: Validators
 --   Lists validators we are monitoring
