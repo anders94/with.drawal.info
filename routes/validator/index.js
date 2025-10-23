@@ -16,17 +16,19 @@ module.exports = {
 	    const w = await db.query(
 		`SELECT
                    s.stamp, w.id, w.slot_id, w.address, w.amount / 1000000000.0 AS amount,
-                   SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_value
-                 FROM
-                   withdrawals w
-                     LEFT JOIN slots s ON w.slot_id = s.id
-                     LEFT JOIN validators v ON w.validator_id = v.id
-                 WHERE
-                   v.id = $1
-                 GROUP BY
-                   s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
-                 ORDER BY
-                    w.slot_id DESC;`, [id]
+                   p.price * (w.amount / 1000000000.0) AS usd_value
+                 FROM withdrawals w
+                   LEFT JOIN slots s ON w.slot_id = s.id
+                   LEFT JOIN validators v ON w.validator_id = v.id
+                   LEFT JOIN LATERAL (
+                     SELECT price
+                     FROM prices
+                     ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp)))
+                     LIMIT 1
+                   ) p ON true
+                 WHERE v.id = $1
+                 ORDER BY w.slot_id DESC`,
+		[id]
 	    );
 	    res.render('validator', {
 		validator: v.rows[0],
