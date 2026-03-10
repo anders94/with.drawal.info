@@ -6,11 +6,12 @@ block content
   - let count = 0;
   - let total = 0;
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  .container
+
+  .container-fluid.px-md-4.px-lg-5
     .card.mt-4
       .card-header
-        h2 Withdrawals
-        form.row.row-cols-lg-auto.g-3.align-items-center(method='post', action='/withdrawals')
+        h2.h4 Withdrawals
+        form.row.row-cols-lg-auto.g-3.align-items-center.mt-3(method='post', action='/withdrawals')
           .col-12
             label.visually-hidden(for='inlineFormInputGroupStart') Start
             .input-group
@@ -22,17 +23,18 @@ block content
               .input-group-text End
               input#inlineFormInputGroupEnd.form-control(type='date', name='end', value=end ? end : new Date().toISOString().slice(0, 10))
           .col-12
-            button.btn.btn-primary(type='submit') &gt;&gt;
+            button.btn.btn-primary(type='submit') Filter &raquo;
       .card-body
-        table.table
+        // Desktop Table
+        table.table.table-hover.d-none.d-md-table
           thead
             tr
               th Date
-              th.d-none.d-md-block Slot
+              th Slot
               th Validator
-              th.d-none.d-lg-block Address
-              th ETH Amount
-              th USD Value
+              th.d-none.d-xl-table-cell Address
+              th.text-end ETH Amount
+              th.text-end USD Value
           tbody
             each withdrawal in withdrawals
               - count ++
@@ -40,19 +42,53 @@ block content
               tr
                 td
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
-                td.d-none.d-md-block
-                  a(href='/slot/'+withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
                 td
-                  a(href='/validator/'+withdrawal.validator_id)= Number(withdrawal.validator_id).toLocaleString('en')
-                td.d-none.d-lg-block
-                  code= withdrawal.address
-                td= Number(withdrawal.amount)
-                td $#{Number(withdrawal.usd_value).toFixed(2)}
+                  a.slot-number(href='/slot/'+withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
+                td
+                  a.validator-id(href='/validator/'+withdrawal.validator_id)= Number(withdrawal.validator_id).toLocaleString('en')
+                td.d-none.d-xl-table-cell
+                  code.address-hash= withdrawal.address
+                td.text-end
+                  span.eth-amount= Number(withdrawal.amount).toFixed(4)
+                td.text-end
+                  span.usd-amount= usdFormatter.format(withdrawal.usd_value)
+
+        // Mobile Cards
+        .mobile-card-list.d-md-none
+          each withdrawal in withdrawals
+            - count ++
+            - total += Number(withdrawal.usd_value)
+            .mobile-data-card
+              .card-row
+                .label Date
+                .value
+                  span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
+              .card-row
+                .label Slot
+                .value
+                  a.slot-number(href='/slot/'+withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
+              .card-row
+                .label Validator
+                .value
+                  a.validator-id(href='/validator/'+withdrawal.validator_id)= Number(withdrawal.validator_id).toLocaleString('en')
+              .card-row
+                .label ETH Amount
+                .value.eth-amount= Number(withdrawal.amount).toFixed(4)
+              .card-row.highlight
+                .label USD Value
+                .value.usd-amount= usdFormatter.format(withdrawal.usd_value)
+              .card-actions
+                a.btn.btn-sm.btn-outline-primary(href='/slot/'+withdrawal.slot_id) View Slot
+                a.btn.btn-sm.btn-outline-primary(href='/validator/'+withdrawal.validator_id) View Validator
+
       .card-footer
         if count == 2500
-          h4.text-end ... More results (only showing first #{count})
+          h4.text-end.text-muted ... More results (only showing first #{count.toLocaleString('en')})
         else
-          h4.text-end Total: #{usdFormatter.format(total)}
+          h4.text-end
+            span.text-muted Total:
+            span.usd-amount.number-xl= usdFormatter.format(total)
+
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));

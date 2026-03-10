@@ -5,36 +5,81 @@ block javascripts
 block content
   - let total = 0;
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  .container
+  - withdrawals.forEach(w => total += Number(w.usd_value));
+
+  .container-fluid.px-md-4.px-lg-5
     .card.mt-4
       .card-header
-        h2 Validator #{validator.id}
-        code= validator.pubkey
+        .row.align-items-center
+          .col-12.col-md-8
+            h2.h3.mb-2
+              span.text-muted Validator
+              |
+              span.validator-id= validator.id.toLocaleString('en')
+            code.address-hash= validator.pubkey
+          .col-12.col-md-4.text-md-end.mt-3.mt-md-0
+            .metric-label Total Earnings
+            .metric-value.usd-amount.number-2xl= usdFormatter.format(total)
+
       .card-body
-        h4 Withdrawals
-        table.table
+        h4.h5.mb-3 Withdrawal History
+
+        // Desktop Table
+        table.table.table-hover.d-none.d-md-table
           thead
             tr
-              th.d-none.d-md-block Date
+              th Date
               th Slot
-              th.d-none.d-sm-block Address
-              th.d-none.d-lg-block ETH Amount
-              th USD
+              th.d-none.d-xl-table-cell Address
+              th.text-end ETH Amount
+              th.text-end USD Value
           tbody
             each withdrawal in withdrawals
-              - total += Number(withdrawal.usd_value)
               tr
-                td.d-none.d-md-block
+                td
                   span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
                 td
-                  a(href='/slot/' + withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
-                td.d-none.d-sm-block
+                  a.slot-number(href='/slot/' + withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
+                td.d-none.d-xl-table-cell
                   a(href='/address/' + withdrawal.address)
-                    code= withdrawal.address
-                td.d-none.d-lg-block= Number(withdrawal.amount)
-                td(align='right')= usdFormatter.format(withdrawal.usd_value)
+                    code.address-hash= withdrawal.address
+                td.text-end
+                  span.eth-amount= Number(withdrawal.amount).toFixed(4)
+                td.text-end
+                  span.usd-amount= usdFormatter.format(withdrawal.usd_value)
+
+        // Mobile Cards
+        .mobile-card-list.d-md-none
+          each withdrawal in withdrawals
+            .mobile-data-card
+              .card-row
+                .label Date
+                .value
+                  span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatISO9075(withdrawal.stamp))= datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true})
+              .card-row
+                .label Slot
+                .value
+                  a.slot-number(href='/slot/' + withdrawal.slot_id)= Number(withdrawal.slot_id).toLocaleString('en')
+              .card-row
+                .label Address
+                .value
+                  a(href='/address/' + withdrawal.address)
+                    code.address-hash.text-xs= withdrawal.address.slice(0, 10) + '...' + withdrawal.address.slice(-8)
+              .card-row
+                .label ETH Amount
+                .value.eth-amount= Number(withdrawal.amount).toFixed(4)
+              .card-row.highlight
+                .label USD Value
+                .value.usd-amount= usdFormatter.format(withdrawal.usd_value)
+              .card-actions
+                a.btn.btn-sm.btn-outline-primary(href='/slot/' + withdrawal.slot_id) View Slot
+                a.btn.btn-sm.btn-outline-primary(href='/address/' + withdrawal.address) View Address
+
       .card-footer
-        h4.text-end Total: #{usdFormatter.format(total)}
+        h4.text-end
+          span.text-muted Total Earnings:
+          |
+          span.usd-amount.number-xl= usdFormatter.format(total)
 
   script.
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');

@@ -5,32 +5,88 @@ block javascripts
 block content
   - let total = 0;
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  .container
+  - withdrawals.forEach(w => total += Number(w.amount));
+  - const epoch = Math.floor(slot.id / 32);
+
+  .container-fluid.px-md-4.px-lg-5
     .card.mt-4
       .card-header
-        h2 Slot #{parseInt(slot.id).toLocaleString('en')}
-        h4 Epoch #{Math.floor(slot.id / 32).toLocaleString('en')}
-        h6 #{datefns.formatISO9075(slot.stamp)} (#{datefns.formatDistance(slot.stamp, new Date(), {addSuffix: true})})
-        p Price of ETH then was: #{usdFormatter.format(slot.price)}
+        h2.h3.mb-3
+          span.text-muted Slot
+          |
+          span.slot-number= parseInt(slot.id).toLocaleString('en')
+
+        // Slot metadata
+        .row.g-3.mt-2
+          .col-12.col-md-3
+            .metric-label Epoch
+            .metric-value.epoch-number
+              a(href='/epoch/' + epoch)= epoch.toLocaleString('en')
+          .col-12.col-md-3
+            .metric-label Withdrawals
+            .metric-value.number= withdrawals.length.toLocaleString('en')
+          .col-12.col-md-6
+            .metric-label ETH Price (at time)
+            .metric-value.usd-amount= usdFormatter.format(slot.price)
+
+        .row.mt-2
+          .col-12
+            p.text-sm.text-muted.mb-0
+              span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(slot.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(slot.stamp)
+
       .card-body
-        h4 Withdrawals
-        table.table
+        h4.h5.mb-3 Withdrawals
+
+        // Desktop Table
+        table.table.table-hover.d-none.d-md-table
           thead
             tr
-              th.d-none.d-lg-block.d-xl-block Address
+              th.d-none.d-xl-table-cell Address
               th Validator
-              th ETH Amount
-              th USD Value
+              th.text-end ETH Amount
+              th.text-end USD Value
           tbody
             each withdrawal in withdrawals
-              - total += Number(withdrawal.amount)
               tr
-                td.d-none.d-lg-block.d-xl-block
+                td.d-none.d-xl-table-cell
                   a(href='/address/' + withdrawal.address)
-                    code= withdrawal.address
+                    code.address-hash= withdrawal.address
                 td
-                  a(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
-                td= Number(withdrawal.amount / 1000000000.0)
-                td(align='right')= usdFormatter.format((withdrawal.amount / 1000000000.0) * slot.price)
+                  a.validator-id(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
+                td.text-end
+                  span.eth-amount= (withdrawal.amount / 1000000000.0).toFixed(4)
+                td.text-end
+                  span.usd-amount= usdFormatter.format((withdrawal.amount / 1000000000.0) * slot.price)
+
+        // Mobile Cards
+        .mobile-card-list.d-md-none
+          each withdrawal in withdrawals
+            .mobile-data-card
+              .card-row
+                .label Validator
+                .value
+                  a.validator-id(href='/validator/' + withdrawal.validator_id)= parseInt(withdrawal.validator_id).toLocaleString('en')
+              .card-row
+                .label Address
+                .value
+                  a(href='/address/' + withdrawal.address)
+                    code.address-hash.text-xs= withdrawal.address.slice(0, 10) + '...' + withdrawal.address.slice(-8)
+              .card-row
+                .label ETH Amount
+                .value.eth-amount= (withdrawal.amount / 1000000000.0).toFixed(4)
+              .card-row.highlight
+                .label USD Value
+                .value.usd-amount= usdFormatter.format((withdrawal.amount / 1000000000.0) * slot.price)
+              .card-actions
+                a.btn.btn-sm.btn-outline-primary(href='/validator/' + withdrawal.validator_id) View Validator
+                a.btn.btn-sm.btn-outline-primary(href='/address/' + withdrawal.address) View Address
+
       .card-footer
-        h4.text-end Total: #{usdFormatter.format((total / 1000000000.0) * slot.price)}
+        h4.text-end
+          span.text-muted Total:
+          |
+          span.usd-amount.number-xl= usdFormatter.format((total / 1000000000.0) * slot.price)
+
+  script.
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));

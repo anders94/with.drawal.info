@@ -1,0 +1,176 @@
+/* Design System Variables - with.drawal.info */
+/* GitHub Primer-inspired dark theme with numbers-first approach */
+
+:root[data-bs-theme='dark'] {
+  /* ========================================
+     COLOR PALETTE - Background Layers
+     ======================================== */
+  --color-bg-primary: #0d1117;        /* Deep space black - Page background */
+  --color-bg-secondary: #161b22;      /* Elevated surface - Cards, modals */
+  --color-bg-tertiary: #21262d;       /* Hover states, active elements */
+  --color-bg-quaternary: #2d333b;     /* Additional layer for depth */
+
+  /* ========================================
+     BORDERS
+     ======================================== */
+  --color-border: #30363d;            /* Default borders - Subtle separation */
+  --color-border-accent: #484f58;     /* Emphasized borders - Headers, dividers */
+  --color-border-hover: #58a6ff;      /* Interactive element borders on hover */
+
+  /* ========================================
+     TEXT COLORS
+     ======================================== */
+  --color-text-primary: #e6edf3;      /* High contrast - Main content */
+  --color-text-secondary: #8b949e;    /* Medium contrast - Labels, metadata */
+  --color-text-tertiary: #6e7681;     /* Low contrast - De-emphasized text */
+  --color-text-muted: #484f58;        /* Very low contrast - Subtle hints */
+  --color-text-inverse: #0d1117;      /* For light backgrounds */
+
+  /* ========================================
+     ACCENT COLORS - Semantic
+     ======================================== */
+  --color-accent-blue: #58a6ff;       /* Links, primary actions, info */
+  --color-accent-blue-hover: #79c0ff; /* Hover state for blue */
+  --color-accent-green: #3fb950;      /* Success, positive values, growth */
+  --color-accent-yellow: #d29922;     /* Warnings, attention */
+  --color-accent-red: #f85149;        /* Errors, negative values, danger */
+  --color-accent-purple: #bc8cff;     /* Special highlights, featured */
+
+  /* ========================================
+     NUMBER-SPECIFIC COLORS (Critical for numbers-oriented design)
+     ======================================== */
+  --color-number-primary: #79c0ff;    /* Main numbers - ETH amounts, USD values */
+  --color-number-secondary: #a5d6ff;  /* Secondary numbers - IDs, indexes */
+  --color-number-positive: #3fb950;   /* Positive trends, gains */
+  --color-number-negative: #f85149;   /* Negative trends, losses */
+  --color-number-highlight: #58a6ff;  /* Emphasized numbers */
+
+  /* ========================================
+     TYPOGRAPHY - Font Families
+     ======================================== */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji";
+  --font-family-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+
+  /* ========================================
+     TYPOGRAPHY - Font Sizes
+     ======================================== */
+  --font-size-xs: 0.75rem;     /* 12px - Small labels, metadata */
+  --font-size-sm: 0.875rem;    /* 14px - Secondary text */
+  --font-size-base: 1rem;      /* 16px - Body text */
+  --font-size-lg: 1.125rem;    /* 18px - Emphasized text */
+  --font-size-xl: 1.25rem;     /* 20px - Large text */
+  --font-size-2xl: 1.5rem;     /* 24px - Headings */
+  --font-size-3xl: 1.875rem;   /* 30px - Large headings */
+  --font-size-4xl: 2.25rem;    /* 36px - Hero numbers */
+  --font-size-5xl: 3rem;       /* 48px - Extra large numbers */
+
+  /* ========================================
+     TYPOGRAPHY - Font Weights
+     ======================================== */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ========================================
+     TYPOGRAPHY - Line Heights
+     ======================================== */
+  --line-height-tight: 1.2;    /* Large headings */
+  --line-height-normal: 1.5;   /* Body text */
+  --line-height-relaxed: 1.75; /* Comfortable reading */
+
+  /* ========================================
+     SPACING SCALE
+     ======================================== */
+  --spacing-xs: 0.25rem;       /* 4px */
+  --spacing-sm: 0.5rem;        /* 8px */
+  --spacing-md: 1rem;          /* 16px */
+  --spacing-lg: 1.5rem;        /* 24px */
+  --spacing-xl: 2rem;          /* 32px */
+  --spacing-2xl: 3rem;         /* 48px */
+  --spacing-3xl: 4rem;         /* 64px */
+
+  /* ========================================
+     BORDER RADIUS
+     ======================================== */
+  --radius-sm: 4px;            /* Small elements */
+  --radius-md: 6px;            /* Cards, buttons */
+  --radius-lg: 8px;            /* Large cards */
+  --radius-xl: 12px;           /* Hero elements */
+  --radius-full: 9999px;       /* Pills, circles */
+
+  /* ========================================
+     SHADOWS - Depth System
+     ======================================== */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.6);
+
+  /* ========================================
+     TRANSITIONS
+     ======================================== */
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
+
+  /* ========================================
+     Z-INDEX SCALE
+     ======================================== */
+  --z-dropdown: 1000;
+  --z-sticky: 1020;
+  --z-fixed: 1030;
+  --z-modal-backdrop: 1040;
+  --z-modal: 1050;
+  --z-popover: 1060;
+  --z-tooltip: 1070;
+
+  /* ========================================
+     COMPONENT-SPECIFIC VARIABLES
+     ======================================== */
+
+  /* Cards */
+  --card-bg: var(--color-bg-secondary);
+  --card-border: var(--color-border);
+  --card-radius: var(--radius-lg);
+  --card-shadow: var(--shadow-sm);
+  --card-padding: var(--spacing-lg);
+
+  /* Tables */
+  --table-bg: transparent;
+  --table-bg-hover: var(--color-bg-tertiary);
+  --table-bg-striped: rgba(255, 255, 255, 0.02);
+  --table-border: var(--color-border);
+  --table-header-color: var(--color-text-secondary);
+
+  /* Buttons */
+  --btn-primary-bg: var(--color-accent-blue);
+  --btn-primary-hover: var(--color-accent-blue-hover);
+  --btn-radius: var(--radius-md);
+
+  /* Forms */
+  --input-bg: var(--color-bg-tertiary);
+  --input-border: var(--color-border);
+  --input-border-focus: var(--color-accent-blue);
+  --input-text: var(--color-text-primary);
+  --input-placeholder: var(--color-text-tertiary);
+
+  /* Navbar */
+  --navbar-bg: var(--color-bg-secondary);
+  --navbar-border: var(--color-border);
+  --navbar-height: 4.5rem;
+
+  /* Metrics/Hero Cards */
+  --metric-card-bg: var(--color-bg-secondary);
+  --metric-card-border: var(--color-border-accent);
+  --metric-label-color: var(--color-text-secondary);
+  --metric-value-color: var(--color-number-primary);
+}
+
+/* ========================================
+   LIGHT MODE OVERRIDES (Optional - for future)
+   ======================================== */
+:root[data-bs-theme='light'] {
+  /* Light mode values can be added here if needed in the future */
+  /* Currently focusing on dark mode only */
+}

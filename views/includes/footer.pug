@@ -1,8 +1,11 @@
-.container
-  footer.py-3.my-4
-    ul.nav.justify-content-center.border-bottom.pb-3.mb-3
-      li.nav-item
-        a.nav-link.px-2.text-body-secondary(href='/') Home
-      li.nav-item
-        a.nav-link.px-2.text-body-secondary(href='/about') About
-    p.text-center.text-body-secondary &copy; #{new Date().getFullYear()} with.drawal.info
+.container-fluid
+  footer.text-center.py-4
+    .nav.justify-content-center.mb-3
+      a.nav-link(href='/') Home
+      a.nav-link(href='/about') About
+      a.nav-link(href='/withdrawals') Withdrawals
+      if session && session.user
+        a.nav-link(href='/dashboard') Dashboard
+    p.text-muted.mb-0
+      | &copy; #{new Date().getFullYear()} with.drawal.info
+      |  &middot; ETH staking withdrawal tracker

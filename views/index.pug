@@ -5,124 +5,267 @@ block javascripts
 
 block content
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  .container
-    .row
-      .col
-        .card.mt-4
+  - const totalETH = withdrawalsPerEpoch.reduce((sum, w) => sum + Number(w.eth_amount), 0);
+  - const totalUSD = withdrawalsPerEpoch.reduce((sum, w) => sum + Number(w.usd_amount), 0);
+  - const totalWithdrawals = withdrawalsPerEpoch.reduce((sum, w) => sum + Number(w.slots), 0);
+  - const latestEpoch = withdrawalsPerEpoch.length > 0 ? Math.max(...withdrawalsPerEpoch.map(w => Number(w.epoch))) : 0;
+
+  .container-fluid.px-md-4.px-lg-5
+
+    // Hero Metrics Section
+    .metrics-hero.mt-4
+      .row.g-3
+        .col-12.col-md-6.col-lg-3
+          .metric-card
+            .metric-label Total ETH Withdrawn
+            .metric-value.eth-amount= totalETH.toLocaleString('en', { maximumFractionDigits: 2 })
+        .col-12.col-md-6.col-lg-3
+          .metric-card
+            .metric-label Total USD Value
+            .metric-value.usd-amount= usdFormatter.format(totalUSD)
+        .col-12.col-md-6.col-lg-3
+          .metric-card
+            .metric-label Total Withdrawals
+            .metric-value.number= totalWithdrawals.toLocaleString('en')
+        .col-12.col-md-6.col-lg-3
+          .metric-card
+            .metric-label Latest Epoch
+            .metric-value.epoch-number= latestEpoch.toLocaleString('en')
+
+    // Chart and Latest Withdrawals
+    .row.mt-4.g-4
+      .col-12.col-lg-8
+        .card.chart-card
           .card-header
-            h2 Withdrawls per Epoch
+            h2.h4 Withdrawals per Epoch
           .card-body
             canvas#chart
-            table.table.table-hover
-              thead
-                tr
-                  th Epoch
-                  th.d-none.d-lg-block.d-xl-block Withdrawals
-                  th ETH Total
-                  th USD Total
-              tbody
-                each withdrawal in withdrawalsPerEpoch
-                  tr
-                    td
-                      a(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
-                    td.d-none.d-lg-block.d-xl-block= withdrawal.slots
-                    td= Number(withdrawal.eth_amount)
-                    td= usdFormatter.format(withdrawal.usd_amount)
-          .card-footer
-            a.btn.btn-primary.float-end(href='/epochs') More Epochs &gt;&gt;
-      .col
-        .card.mt-4
+      .col-12.col-lg-4
+        .card
           .card-header
-            h2 Latest Withdrawls
+            h2.h4 Latest Withdrawals
           .card-body
-            table.table.table-hover
+            // Desktop Table
+            table.table.table-hover.d-none.d-md-table
               thead
                 tr
                   th Slot
-                  th Epoch
-                  th.d-none.d-lg-block.d-xl-block Date
-                  th ETH Value
-                  th USD Value
+                  th.text-end ETH
+                  th.text-end USD
               tbody
-                each withdrawal in latestWithdrawals
+                each withdrawal in latestWithdrawals.slice(0, 5)
                   tr
                     td
-                      a(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
-                    td
-                      a(href='/epoch/' + Math.floor(withdrawal.slot_id / 32))= Math.floor(withdrawal.slot_id / 32).toLocaleString('en')
-                    td.d-none.d-lg-block.d-xl-block
-                      span(data-bs-toggle='tooltip', data-bs-placement='top', data-bs-title=datefns.formatDistance(withdrawal.stamp, new Date(), {addSuffix: true}))= datefns.formatISO9075(withdrawal.stamp)
-                    td= Number(withdrawal.eth_amount)
-                    td= usdFormatter.format(withdrawal.usd_amount)
+                      a.slot-number(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
+                    td.text-end
+                      span.eth-amount= Number(withdrawal.eth_amount).toFixed(4)
+                    td.text-end
+                      span.usd-amount= usdFormatter.format(withdrawal.usd_amount)
+
+            // Mobile Cards
+            .mobile-card-list.d-md-none
+              each withdrawal in latestWithdrawals.slice(0, 5)
+                .mobile-data-card
+                  .card-row
+                    .label Slot
+                    .value
+                      a.slot-number(href='/slot/' + withdrawal.slot_id)= parseInt(withdrawal.slot_id).toLocaleString('en')
+                  .card-row
+                    .label ETH Amount
+                    .value.eth-amount= Number(withdrawal.eth_amount).toFixed(4)
+                  .card-row.highlight
+                    .label USD Value
+                    .value.usd-amount= usdFormatter.format(withdrawal.usd_amount)
           .card-footer
-            a.btn.btn-primary.float-end(href='/withdrawals') More Withdrawals &gt;&gt;
-    .row
-      .col
-        .card.mt-4
+            a.btn.btn-primary.btn-sm.float-end(href='/withdrawals') More Withdrawals &raquo;
+
+    // Withdrawals per Epoch Table
+    .row.mt-4
+      .col-12
+        .card
           .card-header
-            h2 Largest Withdrawals by Epoch
+            h2.h4 Recent Epoch Summaries
           .card-body
-            table.table.table-hover
+            // Desktop Table
+            table.table.table-hover.d-none.d-md-table
               thead
                 tr
                   th Epoch
-                  th.d-none.d-lg-block.d-xl-block Slots
-                  th ETH Value
-                  th USD Value
+                  th.text-end.d-none.d-lg-table-cell Withdrawals
+                  th.text-end ETH Total
+                  th.text-end USD Total
               tbody
-                each summary in largestWithdrawals
+                each withdrawal in withdrawalsPerEpoch.slice(0, 10)
                   tr
                     td
-                      a(href='/epoch/' + summary.epoch)= Number(summary.epoch).toLocaleString('en')
-                    td.d-none.d-lg-block.d-xl-block= Number(summary.slots).toLocaleString('en')
-                    td= Number(summary.eth_amount)
-                    td= usdFormatter.format(summary.usd_amount)
+                      a.epoch-number(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
+                    td.text-end.d-none.d-lg-table-cell
+                      span.number= withdrawal.slots.toLocaleString('en')
+                    td.text-end
+                      span.eth-amount= Number(withdrawal.eth_amount).toFixed(4)
+                    td.text-end
+                      span.usd-amount= usdFormatter.format(withdrawal.usd_amount)
+
+            // Mobile Cards
+            .mobile-card-list.d-md-none
+              each withdrawal in withdrawalsPerEpoch.slice(0, 10)
+                .mobile-data-card
+                  .card-row
+                    .label Epoch
+                    .value
+                      a.epoch-number(href='/epoch/' + withdrawal.epoch)= parseInt(withdrawal.epoch).toLocaleString('en')
+                  .card-row
+                    .label Withdrawals
+                    .value.number= withdrawal.slots.toLocaleString('en')
+                  .card-row
+                    .label ETH Total
+                    .value.eth-amount= Number(withdrawal.eth_amount).toFixed(4)
+                  .card-row.highlight
+                    .label USD Total
+                    .value.usd-amount= usdFormatter.format(withdrawal.usd_amount)
+          .card-footer
+            a.btn.btn-primary.btn-sm.float-end(href='/epochs') More Epochs &raquo;
+
+    // Largest Withdrawals by Epoch
+    .row.mt-4
+      .col-12
+        .card
+          .card-header
+            h2.h4 Largest Withdrawals by Epoch
+          .card-body
+            // Desktop Table
+            table.table.table-hover.d-none.d-md-table
+              thead
+                tr
+                  th Epoch
+                  th.text-end.d-none.d-lg-table-cell Slots
+                  th.text-end ETH Value
+                  th.text-end USD Value
+              tbody
+                each summary in largestWithdrawals.slice(0, 10)
+                  tr
+                    td
+                      a.epoch-number(href='/epoch/' + summary.epoch)= Number(summary.epoch).toLocaleString('en')
+                    td.text-end.d-none.d-lg-table-cell
+                      span.number= Number(summary.slots).toLocaleString('en')
+                    td.text-end
+                      span.eth-amount= Number(summary.eth_amount).toFixed(4)
+                    td.text-end
+                      span.usd-amount= usdFormatter.format(summary.usd_amount)
+
+            // Mobile Cards
+            .mobile-card-list.d-md-none
+              each summary in largestWithdrawals.slice(0, 10)
+                .mobile-data-card
+                  .card-row
+                    .label Epoch
+                    .value
+                      a.epoch-number(href='/epoch/' + summary.epoch)= Number(summary.epoch).toLocaleString('en')
+                  .card-row
+                    .label Slots
+                    .value.number= Number(summary.slots).toLocaleString('en')
+                  .card-row
+                    .label ETH Value
+                    .value.eth-amount= Number(summary.eth_amount).toFixed(4)
+                  .card-row.highlight
+                    .label USD Value
+                    .value.usd-amount= usdFormatter.format(summary.usd_amount)
 
   script.
+    // Initialize tooltips
     const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
     const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
 
+    // Chart.js theme configuration for dark mode
+    Chart.defaults.color = '#8b949e';  // Text color
+    Chart.defaults.borderColor = '#30363d';  // Grid lines
+
+    // Fetch and render chart
     $.ajax({type: 'GET', url: '/api/epochs.json', dataType: 'json', success: (data) => {
         new Chart(document.getElementById('chart'), {
           type: 'line',
           data: {
             labels: data.map(row => Number(row.epoch).toLocaleString('en')),
             datasets: [{
-              label: 'Withdrawals',
+              label: 'USD Value',
               data: data.map(row => row.usd_amount),
-              borderWidth: 1
+              borderWidth: 2,
+              borderColor: '#58a6ff',
+              backgroundColor: 'rgba(88, 166, 255, 0.1)',
+              pointBackgroundColor: '#58a6ff',
+              pointBorderColor: '#58a6ff',
+              pointRadius: 3,
+              pointHoverRadius: 5,
+              tension: 0.3
             }]
           },
           options: {
             responsive: true,
+            maintainAspectRatio: true,
+            interaction: {
+              mode: 'nearest',
+              intersect: false
+            },
             scales: {
               y: {
                 type: 'logarithmic',
+                grid: {
+                  color: '#30363d'
+                },
                 ticks: {
+                  color: '#8b949e',
                   callback: function(value, index, ticks) {
                     return '$' + Number(value).toLocaleString('en');
+                  },
+                  font: {
+                    family: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace'
+                  }
+                }
+              },
+              x: {
+                grid: {
+                  color: '#30363d'
+                },
+                ticks: {
+                  color: '#8b949e',
+                  font: {
+                    family: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace'
                   }
                 }
               }
             },
             onClick(e) {
               const activePoints = this.getElementsAtEventForMode(e, 'nearest', {intersect: true}, false);
-              const [{index}] = activePoints;
-              window.location = '/epoch/' + data[index].epoch;
+              if (activePoints.length > 0) {
+                const [{index}] = activePoints;
+                window.location = '/epoch/' + data[index].epoch;
+              }
             },
             plugins: {
               legend: {
                 display: false
               },
               title: {
-                display: true,
-                text: 'Withdrawals by Epoch'
+                display: false
               },
               tooltip: {
+                backgroundColor: '#21262d',
+                titleColor: '#e6edf3',
+                bodyColor: '#e6edf3',
+                borderColor: '#484f58',
+                borderWidth: 1,
+                padding: 12,
+                bodyFont: {
+                  family: 'ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace',
+                  size: 13
+                },
+                titleFont: {
+                  size: 12,
+                  weight: 'bold'
+                },
                 callbacks: {
                   label: function(context) {
                     let label = context.dataset.label || '';
-
                     if (label) {
                         label += ': ';
                     }

@@ -6,35 +6,73 @@ block javascripts
 block content
   - let total = 0;
   - const usdFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 });
-  .container
-    h1 Dashboard
-    .card.mt-4
+  - validators.forEach(v => total += Number(v.total));
+
+  .container-fluid.px-md-4.px-lg-5
+    // Dashboard header with total
+    .row.align-items-center.mt-4.mb-3
+      .col-12.col-md-8
+        h1.h2 Dashboard
+      .col-12.col-md-4.text-md-end.mt-3.mt-md-0
+        .metric-label Total Portfolio Value
+        .metric-value.usd-amount.number-2xl= usdFormatter.format(total)
+
+    .card
       .card-header
-        button.btn.btn-primary.float-end Add
-        h2 Validators
+        .row.align-items-center
+          .col
+            h2.h4 My Validators
+            p.text-sm.text-muted.mb-0= validators.length.toLocaleString('en') + ' validator' + (validators.length !== 1 ? 's' : '') + ' tracked'
+          .col-auto
+            button.btn.btn-primary.btn-sm Add Validator
+
       .card-body
-        table.table.table-hover
+        // Desktop Table
+        table.table.table-hover.d-none.d-md-table
           thead
             tr
               th #
-              th Validator
-              th.d-none.d-md-block.d-lg-block.d-xl-none Pub Key
-              th.d-none.d-xl-block Pub Key
-              th Payouts
-              th
+              th Validator ID
+              th.d-none.d-xl-table-cell Pub Key
+              th.text-end Total Payouts
+              th.text-end Actions
           tbody
             each validator, index in validators
-              - total += Number(validator.total)
               tr
-                td= index + 1
+                td.text-muted= index + 1
                 td
-                  a(href='/validator/' + validator.id) #{validator.id}
-                td.d-none.d-md-block.d-lg-block.d-xl-none
-                  code= validator.pubkey.substr(0, 10) + '...' + validator.pubkey.substr(validator.pubkey.length - 10)
-                td.d-none.d-xl-block
-                  code= validator.pubkey.substr(0, 32) + '...' + validator.pubkey.substr(validator.pubkey.length -32)
-                td(align='right')= usdFormatter.format(validator.total)
-                td
-                  button.btn.btn-danger Del
+                  a.validator-id(href='/validator/' + validator.id)= validator.id.toLocaleString('en')
+                td.d-none.d-xl-table-cell
+                  code.address-hash= validator.pubkey.substr(0, 32) + '...' + validator.pubkey.substr(validator.pubkey.length - 32)
+                td.text-end
+                  span.usd-amount= usdFormatter.format(validator.total)
+                td.text-end
+                  button.btn.btn-sm.btn-outline-danger Del
+
+        // Mobile Cards
+        .mobile-card-list.d-md-none
+          each validator, index in validators
+            .mobile-data-card
+              .card-row
+                .label #
+                .value.text-muted= index + 1
+              .card-row
+                .label Validator ID
+                .value
+                  a.validator-id(href='/validator/' + validator.id)= validator.id.toLocaleString('en')
+              .card-row
+                .label Pub Key
+                .value
+                  code.address-hash.text-xs= validator.pubkey.substr(0, 10) + '...' + validator.pubkey.substr(validator.pubkey.length - 10)
+              .card-row.highlight
+                .label Total Payouts
+                .value.usd-amount= usdFormatter.format(validator.total)
+              .card-actions
+                a.btn.btn-sm.btn-outline-primary(href='/validator/' + validator.id) View Details
+                button.btn.btn-sm.btn-outline-danger Del
+
       .card-footer
-        h4.text-end Total: #{usdFormatter.format(total)}
+        h4.text-end
+          span.text-muted Total Portfolio:
+          |
+          span.usd-amount.number-xl= usdFormatter.format(total)
