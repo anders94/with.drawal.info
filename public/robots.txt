@@ -1,0 +1,28 @@
+# Search engines are welcome to crawl and index the site.
+# AI scrapers and training crawlers hammer the expensive per-slot and
+# per-validator pages; they are asked not to crawl. (Well-behaved bots honor
+# this; the proof-of-work gate handles the ones that don't.)
+
+User-agent: ClaudeBot
+User-agent: anthropic-ai
+User-agent: Claude-Web
+User-agent: GPTBot
+User-agent: ChatGPT-User
+User-agent: OAI-SearchBot
+User-agent: CCBot
+User-agent: Google-Extended
+User-agent: PerplexityBot
+User-agent: Bytespider
+User-agent: Amazonbot
+User-agent: Applebot-Extended
+User-agent: meta-externalagent
+User-agent: Diffbot
+User-agent: Omgilibot
+User-agent: ImagesiftBot
+User-agent: DataForSeoBot
+Disallow: /
+
+# Everyone else: allowed, but please throttle.
+User-agent: *
+Crawl-delay: 10
+Disallow:
