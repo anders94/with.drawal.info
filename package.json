@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/anders94/staking-monitor#readme",
   "dependencies": {
+    "@cap.js/server": "^4.0.5",
     "axios": "^1.4.0",
     "bcrypt": "^5.1.0",
     "body-parser": "^1.20.2",
@@ -38,5 +39,9 @@
     "pug": "^3.0.2",
     "siwe": "^2.1.4",
     "viem": "^0.3.49"
+  },
+  "devDependencies": {
+    "@cap.js/wasm": "^0.0.7",
+    "@cap.js/widget": "^0.1.56"
   }
 }

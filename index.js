@@ -4,6 +4,7 @@ const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const datefns = require('date-fns');
 const routes = require('./routes');
+const botGate = require('./middleware/botGate');
 const homepageCache = require('./cache');
 const priceUpdater = require('./priceUpdater');
 
@@ -53,6 +54,12 @@ const http = require('http').createServer(app);
 	res.locals.homepageCache = homepageCache;
 	next();
     });
+
+    // Challenge un-verified visitors with a proof-of-work interstitial before
+    // they can reach the (expensive) page handlers. Runs after session (needs
+    // req.session) and after express.static (assets are served earlier and
+    // never reach here).
+    app.use(botGate);
 
     app.use('/', routes);
 

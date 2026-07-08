@@ -7,6 +7,7 @@ class HomepageCache {
             latestWithdrawals: [],
             largestWithdrawals: [],
             epochsData: [],
+            withdrawalsData: [],
             lastUpdated: null,
             isReady: false
         };
@@ -30,7 +31,7 @@ class HomepageCache {
             console.log('Refreshing homepage cache...');
             
             // Execute all four queries in parallel for better performance
-            const [perEpochResult, latestResult, largestResult, epochsResult] = await Promise.all([
+            const [perEpochResult, latestResult, largestResult, epochsResult, withdrawalsResult] = await Promise.all([
                 // perEpoch query
                 db.query(
                     `WITH slot_prices AS (
@@ -103,6 +104,24 @@ class HomepageCache {
                      GROUP BY epoch
                      ORDER BY epoch DESC
                      LIMIT 500`
+                ),
+
+                // withdrawals API query (mirrors /api/withdrawals.json)
+                db.query(
+                    `SELECT
+                       s.stamp, w.slot_id,
+                       SUM(
+                         COALESCE(
+                           p.price,
+                           (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
+                         ) * (w.amount / 1000000000.0)) AS usd_total
+                     FROM
+                       withdrawals w
+                         LEFT JOIN slots s ON w.slot_id = s.id
+                         LEFT JOIN prices p ON s.price_id = p.id
+                     GROUP BY s.stamp, w.slot_id
+                     ORDER BY slot_id DESC
+                     LIMIT 100`
                 )
             ]);
 
@@ -116,6 +135,7 @@ class HomepageCache {
                 latestWithdrawals: latestResult.rows,
                 largestWithdrawals: largestResult.rows,
                 epochsData: epochsData,
+                withdrawalsData: withdrawalsResult.rows,
                 lastUpdated: new Date(),
                 isReady: true
             };
@@ -138,6 +158,10 @@ class HomepageCache {
 
     getEpochsData() {
         return this.cache.epochsData;
+    }
+
+    getWithdrawalsData() {
+        return this.cache.withdrawalsData;
     }
 
     isReady() {
