@@ -35,8 +35,12 @@ const http = require('http').createServer(app);
 	const ip = req.headers['x-forwarded-for'] || req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
 	const method = req.method;
 	const url = req.url;
-	
-	console.log(`${ip} ${method} ${url}`);
+	const start = process.hrtime.bigint();
+
+	res.on('finish', () => {
+	    const ms = Number(process.hrtime.bigint() - start) / 1e6;
+	    console.log(`${ip} ${method} ${url} ${ms.toFixed(1)}ms`);
+	});
 	next();
     });
 
