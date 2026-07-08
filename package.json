@@ -41,7 +41,6 @@
     "viem": "^0.3.49"
   },
   "devDependencies": {
-    "@cap.js/wasm": "^0.0.7",
-    "@cap.js/widget": "^0.1.56"
+    "@cap.js/wasm": "^0.0.7"
   }
 }

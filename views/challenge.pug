@@ -14,35 +14,117 @@ html(lang='en', data-bs-theme='dark')
     #cap-return(data-return-to=returnTo, hidden)
     .d-flex.flex-column.justify-content-center.align-items-center(style='min-height:100vh; text-align:center; padding:2rem;')
       .spinner-border(role='status')
-        span.visually-hidden Loading…
       h1.h4.mt-4 Verifying your browser…
       p.text-secondary#cap-status One moment while we make sure you’re not a bot.
       noscript
         p.text-danger.mt-3 This site requires JavaScript to continue.
 
     script.
-      window.CAP_CUSTOM_WASM_URL = '/js/lib/cap/cap_wasm_bg.wasm';
-    script(src='/js/lib/cap/cap.min.js')
-    script.
-      (async function () {
+      // Self-contained Cap.js proof-of-work solver. We drive the challenge
+      // directly (fetch challenge -> solve with WASM -> redeem -> verify) rather
+      // than using @cap.js/widget, whose speculative auto-solve is incompatible
+      // with @cap.js/server 4.x and redeems with an empty solution set.
+      (function () {
         var returnTo = document.getElementById('cap-return').dataset.returnTo || '/';
-        var status = document.getElementById('cap-status');
-        function fail() {
-          status.textContent = 'Verification failed. Please refresh the page to try again.';
+        var statusEl = document.getElementById('cap-status');
+        function fail(msg) {
+          console.error('[cap] ' + msg);
+          statusEl.innerHTML = 'Verification failed.<br>Please refresh the page to try again.';
         }
-        try {
-          var cap = new window.Cap({ apiEndpoint: '/cap/' });
-          var result = await cap.solve();
-          if (!result || !result.token) return fail();
-          var resp = await fetch('/cap/verify', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ token: result.token })
-          });
-          var data = await resp.json();
-          if (data && data.ok) { window.location.replace(returnTo); return; }
-          fail();
-        } catch (e) {
-          fail();
+        function setStatus(t) { statusEl.textContent = t; }
+
+        // Deterministic PRNG matching @cap.js/server's challenge derivation.
+        function prng(seed, length) {
+          function fnv1a(str) {
+            var h = 2166136261;
+            for (var i = 0; i < str.length; i++) {
+              h ^= str.charCodeAt(i);
+              h += (h << 1) + (h << 4) + (h << 7) + (h << 8) + (h << 24);
+            }
+            return h >>> 0;
+          }
+          var state = fnv1a(seed), r = '';
+          function next() { state ^= state << 13; state ^= state >>> 17; state ^= state << 5; return state >>> 0; }
+          while (r.length < length) r += (next() >>> 0).toString(16).padStart(8, '0');
+          return r.substring(0, length);
         }
+
+        // WASM glue (adapted from @cap.js/widget's worker) -> solve_pow(salt, target).
+        function initWasm(wasmModule) {
+          var wasm, VLEN = 0, mem = null;
+          var enc = new TextEncoder();
+          function getMem() { if (mem === null || mem.byteLength === 0) mem = new Uint8Array(wasm.memory.buffer); return mem; }
+          function pass(str, malloc, realloc) {
+            if (realloc === undefined) {
+              var e = enc.encode(str), p = malloc(e.length, 1) >>> 0;
+              getMem().subarray(p, p + e.length).set(e); VLEN = e.length; return p;
+            }
+            var len = str.length, ptr = malloc(len, 1) >>> 0, m = getMem(), off = 0;
+            for (; off < len; off++) { var c = str.charCodeAt(off); if (c > 127) break; m[ptr + off] = c; }
+            if (off !== len) {
+              if (off !== 0) str = str.slice(off);
+              var nl = off + str.length * 3;
+              ptr = realloc(ptr, len, nl, 1) >>> 0; len = nl;
+              var sub = getMem().subarray(ptr + off, ptr + len);
+              var w = enc.encodeInto(str, sub).written;
+              off += w; ptr = realloc(ptr, len, off, 1) >>> 0;
+            }
+            VLEN = off; return ptr;
+          }
+          var imports = { wbg: {} };
+          imports.wbg.__wbindgen_init_externref_table = function () {
+            var t = wasm.__wbindgen_export_0, o = t.grow(4);
+            t.set(0, undefined); t.set(o + 0, undefined); t.set(o + 1, null); t.set(o + 2, true); t.set(o + 3, false);
+          };
+          var inst = new WebAssembly.Instance(wasmModule, imports);
+          wasm = inst.exports;
+          if (wasm.__wbindgen_start) wasm.__wbindgen_start();
+          return function (salt, target) {
+            var sp = pass(salt, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc), sl = VLEN;
+            var tp = pass(target, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc), tl = VLEN;
+            return BigInt.asUintN(64, wasm.solve_pow(sp, sl, tp, tl));
+          };
+        }
+
+        function post(path, body) {
+          return fetch(path, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body || {})
+          }).then(function (r) { return r.json().catch(function () { return {}; }); });
+        }
+        function yield_() { return new Promise(function (r) { setTimeout(r, 0); }); }
+
+        (async function () {
+          if (typeof WebAssembly !== 'object' || !WebAssembly.compile) { fail('WebAssembly unavailable'); return; }
+          try {
+            var wasmModule = await fetch('/js/lib/cap/cap_wasm_bg.wasm')
+              .then(function (r) { if (!r.ok) throw new Error('wasm http ' + r.status); return r.arrayBuffer(); })
+              .then(function (buf) { return WebAssembly.compile(buf); });
+            var solve_pow = initWasm(wasmModule);
+
+            var ch = await post('/cap/challenge');
+            if (!ch || !ch.token || !ch.challenge) { fail('bad challenge response'); return; }
+            var c = ch.challenge.c, s = ch.challenge.s, d = ch.challenge.d;
+
+            var solutions = [];
+            for (var i = 1; i <= c; i++) {
+              var salt = prng(ch.token + i, s);
+              var target = prng(ch.token + i + 'd', d);
+              solutions.push(Number(solve_pow(salt, target)));
+              if (i % 5 === 0 || i === c) {
+                setStatus('Verifying your browser… ' + Math.round((i / c) * 100) + '%');
+                await yield_();
+              }
+            }
+
+            var redeemed = await post('/cap/redeem', { token: ch.token, solutions: solutions });
+            if (!redeemed || !redeemed.success || !redeemed.token) { fail('redeem rejected: ' + (redeemed && redeemed.message || '')); return; }
+
+            var verified = await post('/cap/verify', { token: redeemed.token });
+            if (verified && verified.ok) { window.location.replace(returnTo); return; }
+            fail('verification rejected');
+          } catch (e) {
+            fail('exception: ' + (e && e.message || e));
+          }
+        })();
       })();
