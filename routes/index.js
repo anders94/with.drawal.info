@@ -11,6 +11,7 @@ const epoch = require('./epoch');
 const address = require('./address');
 const authenticate = require('./authenticate');
 const api = require('./api');
+const cap = require('./cap');
 
 router.get('/', async (req, res, next) => {
     try {
@@ -95,5 +96,10 @@ router.post('/authenticate/verify', cors(), authenticate.verify.post);
 
 router.get('/api/withdrawals.json', api.withdrawals.get);
 router.get('/api/epochs.json', api.epochs.get);
+
+// Cap.js proof-of-work endpoints (used by the bot-gate interstitial)
+router.post('/cap/challenge', cap.challenge);
+router.post('/cap/redeem', cap.redeem);
+router.post('/cap/verify', cap.verify);
 
 module.exports = router;

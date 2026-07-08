@@ -1,0 +1,48 @@
+doctype html
+html(lang='en', data-bs-theme='dark')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1, maximum-scale=1')
+    meta(name='robots', content='noindex')
+    title Verifying… · with.drawal.info
+
+    link(href='/css/variables.css', rel='stylesheet')
+    link(href='/css/lib/bootstrap.min.css', rel='stylesheet')
+    link(href='/css/site.css', rel='stylesheet')
+
+  body
+    #cap-return(data-return-to=returnTo, hidden)
+    .d-flex.flex-column.justify-content-center.align-items-center(style='min-height:100vh; text-align:center; padding:2rem;')
+      .spinner-border(role='status')
+        span.visually-hidden Loading…
+      h1.h4.mt-4 Verifying your browser…
+      p.text-secondary#cap-status One moment while we make sure you’re not a bot.
+      noscript
+        p.text-danger.mt-3 This site requires JavaScript to continue.
+
+    script.
+      window.CAP_CUSTOM_WASM_URL = '/js/lib/cap/cap_wasm_bg.wasm';
+    script(src='/js/lib/cap/cap.min.js')
+    script.
+      (async function () {
+        var returnTo = document.getElementById('cap-return').dataset.returnTo || '/';
+        var status = document.getElementById('cap-status');
+        function fail() {
+          status.textContent = 'Verification failed. Please refresh the page to try again.';
+        }
+        try {
+          var cap = new window.Cap({ apiEndpoint: '/cap/' });
+          var result = await cap.solve();
+          if (!result || !result.token) return fail();
+          var resp = await fetch('/cap/verify', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ token: result.token })
+          });
+          var data = await resp.json();
+          if (data && data.ok) { window.location.replace(returnTo); return; }
+          fail();
+        } catch (e) {
+          fail();
+        }
+      })();
