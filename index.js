@@ -12,6 +12,12 @@ const app = express();
 const port = process.env.PORT ? process.env.PORT : 3000;
 const host = process.env.HOST ? process.env.HOST : '0.0.0.0';
 app.set('view engine', 'pug');
+// Cache compiled Pug templates instead of recompiling from disk on every
+// request. Express only enables this automatically when NODE_ENV=production;
+// enabling it explicitly cuts render time from ~7ms to ~0.1ms (it matters most
+// on the bot-gate interstitial, which is rendered for every un-verified hit).
+// Disable via NODE_ENV=development if you want template hot-reload while editing.
+if (process.env.NODE_ENV !== 'development') app.set('view cache', true);
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
