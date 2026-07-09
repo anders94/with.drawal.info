@@ -67,9 +67,16 @@ const historic = async () => {
 };
 
 const matchSlotsToPrices = async () => {
+    // nearest price by stamp: two btree probes on prices(stamp) instead of
+    // sorting the whole prices table per row (same pattern as db.nearestPrice)
     await db.query(
 	`UPDATE slots s
-           SET price_id = (SELECT id FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
+           SET price_id = (
+             SELECT c.id FROM (
+               (SELECT id, stamp FROM prices WHERE stamp <= s.stamp ORDER BY stamp DESC LIMIT 1)
+               UNION ALL
+               (SELECT id, stamp FROM prices WHERE stamp > s.stamp ORDER BY stamp ASC LIMIT 1)
+             ) c ORDER BY ABS(EXTRACT(EPOCH FROM (c.stamp - s.stamp))) LIMIT 1)
          WHERE s.price_id IS NULL;`
     );
 
