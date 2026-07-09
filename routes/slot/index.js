@@ -8,7 +8,7 @@ module.exports = {
 	    const s = await db.query(
 		`SELECT
                    w.slot_id, s.stamp, SUM(w.amount) / 1000000000.0 AS eth_value,
-                   COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) * (SUM(w.amount) / 1000000000.0) AS usd_value
+                   COALESCE(p.price, ${db.nearestPrice('s.stamp')}) * (SUM(w.amount) / 1000000000.0) AS usd_value
                  FROM withdrawals w
                    LEFT JOIN slots s ON w.slot_id = s.id
                    LEFT JOIN prices p ON s.price_id = p.id
@@ -41,7 +41,7 @@ module.exports = {
 	    const s = await db.query(
 		`SELECT
                    w.slot_id, s.stamp, SUM(w.amount) / 1000000000.0 AS eth_value,
-                   COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) * (SUM(w.amount) / 1000000000.0) AS usd_value
+                   COALESCE(p.price, ${db.nearestPrice('s.stamp')}) * (SUM(w.amount) / 1000000000.0) AS usd_value
                  FROM withdrawals w
                    LEFT JOIN slots s ON w.slot_id = s.id
                    LEFT JOIN prices p ON s.price_id = p.id

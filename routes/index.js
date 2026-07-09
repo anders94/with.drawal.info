@@ -38,12 +38,13 @@ router.get('/dashboard', async (req, res, next) => {
 	const v = await db.query(
 	    `SELECT
                v.id, v.pubkey,
-               SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS total
+               SUM(COALESCE(p.price, ${db.nearestPrice('s.stamp')}) * (w.amount / 1000000000.0)) AS total
              FROM
                withdrawals w
                  LEFT JOIN slots s ON w.slot_id = s.id
                  LEFT JOIN validators v ON w.validator_id = v.id
                  LEFT JOIN users2validators u2v ON v.id = u2v.validator_id
+                 LEFT JOIN prices p ON s.price_id = p.id
              WHERE u2v.user_id = $1
              GROUP BY v.id
              ORDER BY v.id ASC
