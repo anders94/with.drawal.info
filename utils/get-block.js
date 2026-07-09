@@ -1,10 +1,11 @@
 const { createPublicClient, http } = require('viem');
 const { mainnet } = require('viem/chains');
+const config = require('../config');
 
 (async () => {
     const client = createPublicClient({
 	chain: mainnet,
-	transport: http('http://10.20.2.2:8545'),
+	transport: http(config.ethrpc.url),
     });
 
     //const blockNumber = await client.getBlockNumber(); // get latest block number

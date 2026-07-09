@@ -3,10 +3,34 @@ const bodyParser = require('body-parser');
 const session = require('express-session');
 const MemoryStore = require('memorystore')(session);
 const datefns = require('date-fns');
+const axios = require('axios');
+const config = require('./config');
 const routes = require('./routes');
 const botGate = require('./middleware/botGate');
 const homepageCache = require('./cache');
 const priceUpdater = require('./priceUpdater');
+
+// Log reachability of the Ethereum endpoints at startup so a misconfigured
+// ETHRPCURL / BEACONURL is visible in the logs. Informational only — the web
+// serving path does not depend on either, so failures don't block startup.
+const checkEthEndpoints = async () => {
+    try {
+	const res = await axios.post(config.ethrpc.url,
+	    { jsonrpc: '2.0', method: 'web3_clientVersion', params: [], id: 1 },
+	    { timeout: 5000 });
+	console.log(`ethrpc OK ${config.ethrpc.url} (${res.data.result})`);
+    }
+    catch (e) {
+	console.log(`ethrpc FAILED ${config.ethrpc.url} (${e.message})`);
+    }
+    try {
+	const res = await axios.get(config.beacon.url + '/eth/v1/node/version', { timeout: 5000 });
+	console.log(`beacon OK ${config.beacon.url} (${res.data.data.version})`);
+    }
+    catch (e) {
+	console.log(`beacon FAILED ${config.beacon.url} (${e.message})`);
+    }
+};
 
 const app = express();
 const port = process.env.PORT ? process.env.PORT : 3000;
@@ -25,6 +49,8 @@ app.use(bodyParser.urlencoded({extended: true}));
 const http = require('http').createServer(app);
 
 (async () => {
+    checkEthEndpoints(); // async, logs results; doesn't block startup
+
     // Initialize homepage cache before starting server
     await homepageCache.initialize();
 

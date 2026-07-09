@@ -5,7 +5,7 @@ const config = require('../config');
 const main = async (id) => {
     const res = await db.query('SELECT id, pubkey FROM validators WHERE id = $1', [id]);
     if (res.rows && res.rows.length == 0) {
-	const o = await axios.get(config.ethrpc.url + '/eth/v1/beacon/states/finalized/validators/' + id);
+	const o = await axios.get(config.beacon.url + '/eth/v1/beacon/states/finalized/validators/' + id);
 
 	const pubkey = o.data.data.validator.pubkey;
 	console.log('adding', id, pubkey);
