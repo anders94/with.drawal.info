@@ -18,6 +18,10 @@
 DROP INDEX IF EXISTS validators_idx;
 DROP INDEX IF EXISTS withdrawals_amount_idx;
 
+/* idx_prices_stamp duplicates prices_stamp_key (UNIQUE, backs the constraint).
+ * Both are btrees on prices(stamp); the unique one satisfies every lookup. */
+DROP INDEX IF EXISTS idx_prices_stamp;
+
 /* Backfill slots.price_id where NULL. The ingest (utils/update.js) does not
  * set price_id; only the offline summaries script backfilled it. The app's
  * queries prefer price_id and fall back to a nearest-stamp lookup, so full
