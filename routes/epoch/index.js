@@ -9,7 +9,7 @@ module.exports = {
 		`WITH slot_prices AS (
                    SELECT
                      s.id AS slot_id,
-                     COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+                     COALESCE(p.price, ${db.nearestPrice('s.stamp')}) AS price
                    FROM
                      slots s
                        LEFT JOIN prices p ON s.price_id = p.id
@@ -52,7 +52,7 @@ module.exports = {
 		`WITH slot_prices AS (
                    SELECT
                      s.id AS slot_id,
-                     COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+                     COALESCE(p.price, ${db.nearestPrice('s.stamp')}) AS price
                    FROM
                      slots s
                        LEFT JOIN prices p ON s.price_id = p.id

@@ -37,7 +37,7 @@ class HomepageCache {
                     `WITH slot_prices AS (
                        SELECT
                          s.id AS slot_id,
-                         COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+                         COALESCE(p.price, ${db.nearestPrice('s.stamp')}) AS price
                        FROM
                          slots s
                            LEFT JOIN prices p ON s.price_id = p.id
@@ -61,11 +61,12 @@ class HomepageCache {
                 db.query(
                     `SELECT
                        s.stamp, w.id, v.id AS validator_id, w.slot_id, w.address, w.amount / 1000000000.0 AS eth_amount,
-                       SUM((SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1) * (w.amount / 1000000000.0)) AS usd_amount
+                       SUM(COALESCE(p.price, ${db.nearestPrice('s.stamp')}) * (w.amount / 1000000000.0)) AS usd_amount
                      FROM
                        withdrawals w
                          LEFT JOIN slots s ON w.slot_id = s.id
                          LEFT JOIN validators v ON w.validator_id = v.id
+                         LEFT JOIN prices p ON s.price_id = p.id
                      GROUP BY
                        s.stamp, v.id, w.id, w.slot_id, w.address, w.amount
                      ORDER BY
@@ -88,7 +89,7 @@ class HomepageCache {
                     `WITH slot_prices AS (
                        SELECT
                          s.id AS slot_id,
-                         COALESCE(p.price, (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)) AS price
+                         COALESCE(p.price, ${db.nearestPrice('s.stamp')}) AS price
                        FROM
                          slots s
                            LEFT JOIN prices p ON s.price_id = p.id
@@ -113,7 +114,7 @@ class HomepageCache {
                        SUM(
                          COALESCE(
                            p.price,
-                           (SELECT price FROM prices ORDER BY ABS(EXTRACT(EPOCH FROM AGE(stamp, s.stamp))) LIMIT 1)
+                           ${db.nearestPrice('s.stamp')}
                          ) * (w.amount / 1000000000.0)) AS usd_total
                      FROM
                        withdrawals w
