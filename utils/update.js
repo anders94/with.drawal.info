@@ -7,6 +7,11 @@ const sleep = async (ms) => new Promise(resolve => setTimeout(resolve, ms));
 const delay = 10;                 // pause between chunks (was: per slot)
 const CHUNK = 16;                 // beacon blocks fetched in parallel
 const VALIDATOR_CONCURRENCY = 8;  // parallel lookups for unknown validators
+// Genuinely empty slots (no block proposed) 404 in streaks of 1-3; dozens in a
+// row means the node is missing history (e.g. checkpoint-synced and still
+// backfilling). Stop rather than march past it: if we inserted anything beyond
+// the hole, resume-from-max would never revisit it - a permanent gap.
+const MAX_CONSECUTIVE_404 = 32;
 const beaconURL = config.beacon.url;
 
 // headers endpoint needs no execution-payload reconstruction, so it works
@@ -110,6 +115,7 @@ const storeSlot = async (slot, message) => {
     let target = cap || await getFinalizedSlot();
     const startSlot = slot, t0 = Date.now();
     let inserted = 0;
+    let consecutive404 = 0;
 
     while (slot <= target) {
 	const slots = [];
@@ -127,9 +133,22 @@ const storeSlot = async (slot, message) => {
 	    }
 	    throw e;
 	}
-	for (let i = 0; i < slots.length; i++)
-	    if (blocks[i])
+	let holeAt = null;
+	for (let i = 0; i < slots.length; i++) {
+	    if (blocks[i]) {
+		consecutive404 = 0;
 		inserted += await storeSlot(slots[i], blocks[i]);
+	    }
+	    else if (++consecutive404 >= MAX_CONSECUTIVE_404) {
+		holeAt = slots[i];
+		break;
+	    }
+	}
+	if (holeAt !== null) {
+	    console.log(MAX_CONSECUTIVE_404 + ' consecutive missing blocks ending at slot ' + holeAt +
+			' - the node is missing history here (still backfilling?). Stopping; re-run to resume.');
+	    break;
+	}
 
 	slot += slots.length;
 
