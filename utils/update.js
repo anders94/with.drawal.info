@@ -116,6 +116,11 @@ const storeSlot = async (slot, message) => {
     const startSlot = slot, t0 = Date.now();
     let inserted = 0;
     let consecutive404 = 0;
+    let lastLog = Date.now();
+
+    console.log('beacon:', beaconURL);
+    console.log('resuming at slot', slot, '(db) -> target', target,
+		cap ? '(cap)' : '(finalized)', '|', (target - slot), 'slots to go');
 
     while (slot <= target) {
 	const slots = [];
@@ -152,7 +157,8 @@ const storeSlot = async (slot, message) => {
 
 	slot += slots.length;
 
-	if ((slot - startSlot) % 1600 < CHUNK) {
+	if (Date.now() - lastLog > 10000) {
+	    lastLog = Date.now();
 	    const rate = (slot - startSlot) / ((Date.now() - t0) / 1000);
 	    console.log('slot', slot, '|', rate.toFixed(1), 'slots/s |',
 			inserted, 'withdrawals |', Math.round((target - slot) / rate / 60), 'min left');
